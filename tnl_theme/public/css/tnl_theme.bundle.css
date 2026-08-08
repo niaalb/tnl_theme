@@ -1,0 +1,49 @@
+/* TNL ERPNext theme overrides */
+
+/* --- Login page: Odoo-style palette (#714B67 primary purple) ---
+   Scoped to body[data-path="login"] only, per current theming scope. */
+
+body[data-path="login"] {
+	background-color: #f4f2f5;
+}
+
+body[data-path="login"] .for-login .page-card {
+	background-color: #ffffff;
+	border: 1px solid #e8e6e9;
+	border-radius: 8px;
+	box-shadow: 0 2px 10px rgba(30, 20, 30, 0.06);
+}
+
+body[data-path="login"] .page-card-head h4 {
+	color: #2b2028;
+	font-weight: 600;
+}
+
+body[data-path="login"] .page-card-subtitle {
+	color: #8a7f88;
+}
+
+body[data-path="login"] .form-control {
+	border-radius: 4px;
+}
+
+body[data-path="login"] .form-control:focus {
+	border-color: #714b67;
+	box-shadow: 0 0 0 2px rgba(113, 75, 103, 0.15);
+}
+
+body[data-path="login"] .forgot-password-message a,
+body[data-path="login"] .page-card a {
+	color: #714b67;
+}
+
+body[data-path="login"] .for-login .page-card-actions .btn-login {
+	background: #714b67;
+	border-radius: 4px;
+}
+
+body[data-path="login"] .for-login .page-card-actions .btn-login:hover,
+body[data-path="login"] .for-login .page-card-actions .btn-login:focus,
+body[data-path="login"] .for-login .page-card-actions .btn-login:active {
+	background: #5c3d54;
+}

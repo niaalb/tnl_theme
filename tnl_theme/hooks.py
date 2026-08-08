@@ -25,11 +25,11 @@ app_license = "mit"
 # ------------------
 
 # include js, css files in header of desk.html
-# app_include_css = "/assets/tnl_theme/css/tnl_theme.css"
+app_include_css = "tnl_theme.bundle.css"
 # app_include_js = "/assets/tnl_theme/js/tnl_theme.js"
 
 # include js, css files in header of web template
-# web_include_css = "/assets/tnl_theme/css/tnl_theme.css"
+web_include_css = "tnl_theme.bundle.css"
 # web_include_js = "/assets/tnl_theme/js/tnl_theme.js"
 
 # include custom scss in every website theme (without file extension ".scss")
