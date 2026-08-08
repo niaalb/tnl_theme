@@ -49,6 +49,24 @@
 	color: #714b67;
 }
 
+/* --- Workspace shortcut/link hover accent (light theme) ---
+   These shortcut cards are the desk's equivalent of Odoo's app-tile grid on
+   the home screen. Default hover flips border/icon/title to --invert-neutral
+   (black); swapping that to brand purple gives the most-used navigation
+   surface a consistent accent without touching layout. */
+.widget.shortcut-widget-box:hover {
+	--icon-stroke: #714b67;
+	border-color: #714b67;
+}
+
+.widget.shortcut-widget-box:hover .widget-label .widget-title {
+	color: #714b67;
+}
+
+.links-widget-box .link-item .link-content:hover {
+	color: #714b67;
+}
+
 /* --- Login-style pages: Odoo-style palette (#714B67 primary purple) ---
    Covers /login (and its hash-toggled forgot/signup/email-link sections,
    all served under data-path="login") and /update-password, which shares
