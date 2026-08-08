@@ -35,6 +35,20 @@
 	transition: none;
 }
 
+/* --- Sidebar active-item tint (light theme only) ---
+   Default active item is a plain white card (--sidebar-active-color) popping
+   via box-shadow. Tinting it purple and coloring the label/icon (which
+   inherits via currentColor) makes the current workspace/section obviously
+   "branded" without changing the underlying card/shadow mechanics. */
+:root,
+[data-theme="light"] {
+	--sidebar-active-color: rgba(113, 75, 103, 0.08);
+}
+
+.standard-sidebar-item.active-sidebar .item-anchor {
+	color: #714b67;
+}
+
 /* --- Login page: Odoo-style palette (#714B67 primary purple) ---
    Scoped to body[data-path="login"] only, per current theming scope. */
 
