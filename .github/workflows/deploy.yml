@@ -59,6 +59,7 @@ jobs:
         run: |
           set -e
           cd /opt/frappe/frappe_docker
+          sed -i "s|^CUSTOM_IMAGE=.*|CUSTOM_IMAGE=${{ env.IMAGE }}|" custom.env
           sed -i "s/^CUSTOM_TAG=.*/CUSTOM_TAG=${{ github.sha }}/" custom.env
           docker compose --env-file custom.env \
             -f compose.yaml \
