@@ -76,6 +76,40 @@
 	color: var(--tnl-600);
 }
 
+/* --- List view row hover tint (light theme) ---
+   Default hover uses the shared --highlight-color variable (used by many
+   unrelated components), so left untouched; this targets only the list
+   row container with a brand-tinted hover instead. */
+.list-row-container:hover,
+.list-row-container:hover .level-right,
+.list-row-container:focus .list-row {
+	background-color: rgba(114, 75, 104, 0.06);
+}
+
+/* --- Secondary button outline (light theme) ---
+   Odoo's non-primary buttons read as outlined rather than a flat gray
+   fill. Adding a thin border keeps the existing --control-bg fill and
+   hover/active behavior untouched, just gives it an outlined edge. */
+.btn.btn-default {
+	border: 1px solid var(--border-color);
+}
+
+/* --- Kanban card hover accent (light theme) ---
+   Cards are already flat with a shadow-on-hover; adding a brand-colored
+   border on hover ties it to the rest of the theme without touching the
+   (user-configured) stage/status colors. */
+.kanban-card:hover {
+	border-color: var(--tnl-600);
+}
+
+/* --- Form tab active underline (light theme) ---
+   Default active tab underlines with plain --text-color; brand purple
+   matches Odoo's colored notebook-tab convention. */
+.form-tabs .nav-link.active {
+	border-bottom-color: var(--tnl-600);
+	color: var(--tnl-600);
+}
+
 /* --- Login-style pages: TNL brand gradient background ---
    Covers /login (and its hash-toggled forgot/signup/email-link sections,
    all served under data-path="login") and /update-password, which shares
