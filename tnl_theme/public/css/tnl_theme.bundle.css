@@ -1,5 +1,14 @@
 /* TNL ERPNext theme overrides */
 
+/* --- TNL brand palette (from official brand guideline) --- */
+:root {
+	--tnl-50: #ead9e4;
+	--tnl-200: #d7bacd;
+	--tnl-600: #724b68;
+	--tnl-800: #4d3146;
+	--tnl-950: #241c22;
+}
+
 /* --- Global brand color (desk + website, light theme) ---
    --primary and --btn-primary are Frappe's own theming variables (buttons,
    checkboxes, radios, links, progress bars all read from them), so overriding
@@ -9,8 +18,8 @@
    dark mode is intentionally left untouched for now. */
 :root,
 [data-theme="light"] {
-	--primary: #714b67;
-	--btn-primary: #714b67;
+	--primary: var(--tnl-600);
+	--btn-primary: var(--tnl-600);
 }
 
 /* --- Primary button polish (desk-wide, light theme) ---
@@ -20,14 +29,14 @@
    radius for this pass). Just adding a subtle shadow + hover lift, scoped
    to buttons that already use our purple --btn-primary. */
 .btn.btn-primary {
-	box-shadow: 0 1px 2px rgba(113, 75, 103, 0.25);
+	box-shadow: 0 1px 2px rgba(114, 75, 104, 0.25);
 	transition:
 		background-color 120ms ease,
 		box-shadow 120ms ease;
 }
 
 .btn.btn-primary:hover {
-	box-shadow: 0 2px 6px rgba(113, 75, 103, 0.35);
+	box-shadow: 0 2px 6px rgba(114, 75, 104, 0.35);
 }
 
 [data-theme="dark"] .btn.btn-primary {
@@ -42,11 +51,11 @@
    "branded" without changing the underlying card/shadow mechanics. */
 :root,
 [data-theme="light"] {
-	--sidebar-active-color: rgba(113, 75, 103, 0.08);
+	--sidebar-active-color: rgba(114, 75, 104, 0.08);
 }
 
 .standard-sidebar-item.active-sidebar .item-anchor {
-	color: #714b67;
+	color: var(--tnl-600);
 }
 
 /* --- Workspace shortcut/link hover accent (light theme) ---
@@ -55,26 +64,34 @@
    (black); swapping that to brand purple gives the most-used navigation
    surface a consistent accent without touching layout. */
 .widget.shortcut-widget-box:hover {
-	--icon-stroke: #714b67;
-	border-color: #714b67;
+	--icon-stroke: var(--tnl-600);
+	border-color: var(--tnl-600);
 }
 
 .widget.shortcut-widget-box:hover .widget-label .widget-title {
-	color: #714b67;
+	color: var(--tnl-600);
 }
 
 .links-widget-box .link-item .link-content:hover {
-	color: #714b67;
+	color: var(--tnl-600);
 }
 
-/* --- Login-style pages: Odoo-style palette (#714B67 primary purple) ---
+/* --- Login-style pages: TNL brand gradient background ---
    Covers /login (and its hash-toggled forgot/signup/email-link sections,
    all served under data-path="login") and /update-password, which shares
    the exact same .page-card markup. Not scoped to .for-login specifically
    so it also matches .for-reset-password on the update-password page. */
 
 :is(body[data-path="login"], body[data-path="update-password"]) {
-	background-color: #f4f2f5;
+	min-height: 100vh;
+	background: linear-gradient(
+		135deg,
+		var(--tnl-50) 0%,
+		var(--tnl-200) 30%,
+		var(--tnl-600) 65%,
+		var(--tnl-800) 88%,
+		var(--tnl-950) 100%
+	);
 }
 
 :is(body[data-path="login"], body[data-path="update-password"]) .page-card {
@@ -111,18 +128,18 @@
 }
 
 :is(body[data-path="login"], body[data-path="update-password"]) .form-control:focus {
-	border-color: #714b67;
-	box-shadow: 0 0 0 2px rgba(113, 75, 103, 0.15);
+	border-color: var(--tnl-600);
+	box-shadow: 0 0 0 2px rgba(114, 75, 104, 0.15);
 }
 
 :is(body[data-path="login"], body[data-path="update-password"]) .forgot-password-message a,
 :is(body[data-path="login"], body[data-path="update-password"]) .page-card a {
-	color: #714b67;
+	color: var(--tnl-600);
 }
 
 :is(body[data-path="login"], body[data-path="update-password"]) .page-card-actions .btn-login,
 :is(body[data-path="login"], body[data-path="update-password"]) .page-card-actions .btn-signup:not(:disabled) {
-	background: #714b67;
+	background: var(--tnl-600);
 	border-radius: 4px;
 }
 
@@ -132,5 +149,5 @@
 :is(body[data-path="login"], body[data-path="update-password"]) .page-card-actions .btn-signup:not(:disabled):hover,
 :is(body[data-path="login"], body[data-path="update-password"]) .page-card-actions .btn-signup:not(:disabled):focus,
 :is(body[data-path="login"], body[data-path="update-password"]) .page-card-actions .btn-signup:not(:disabled):active {
-	background: #5c3d54;
+	background: var(--tnl-800);
 }
