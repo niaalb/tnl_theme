@@ -159,6 +159,51 @@
 	content: url("/assets/tnl_theme/images/icons/frappe-hr.png");
 }
 
+/* --- Accounting sub-menu tile icons (recolor, not redesign) ---
+   These 9 tiles (the "Accounting" group's children) all share the exact
+   same source artwork, just with erpnext's blue (#0289F7) swapped for the
+   brand purple — recoloring the existing icon files directly instead of
+   commissioning 9 new custom images, since the glyphs themselves are fine. */
+.app-icon[src="/assets/erpnext/icons/desktop_icons/solid/invoicing.svg"] {
+	content: url("/assets/tnl_theme/images/icons/accounting/invoicing.svg");
+}
+
+.app-icon[src="/assets/erpnext/icons/desktop_icons/solid/payments.svg"] {
+	content: url("/assets/tnl_theme/images/icons/accounting/payments.svg");
+}
+
+.app-icon[src="/assets/erpnext/icons/desktop_icons/solid/financial_reports.svg"] {
+	content: url("/assets/tnl_theme/images/icons/accounting/financial_reports.svg");
+}
+
+.app-icon[src="/assets/erpnext/icons/desktop_icons/solid/accounts_setup.svg"] {
+	content: url("/assets/tnl_theme/images/icons/accounting/accounts_setup.svg");
+}
+
+.app-icon[src="/assets/erpnext/icons/desktop_icons/solid/taxes.svg"] {
+	content: url("/assets/tnl_theme/images/icons/accounting/taxes.svg");
+}
+
+.app-icon[src="/assets/erpnext/icons/desktop_icons/solid/banking.svg"] {
+	content: url("/assets/tnl_theme/images/icons/accounting/banking.svg");
+}
+
+.app-icon[src="/assets/erpnext/icons/desktop_icons/solid/budget.svg"] {
+	content: url("/assets/tnl_theme/images/icons/accounting/budget.svg");
+}
+
+.app-icon[src="/assets/erpnext/icons/desktop_icons/solid/share_management.svg"] {
+	content: url("/assets/tnl_theme/images/icons/accounting/share_management.svg");
+}
+
+.app-icon[src="/assets/erpnext/icons/desktop_icons/solid/subscription.svg"] {
+	content: url("/assets/tnl_theme/images/icons/accounting/subscription.svg");
+}
+
+.app-icon[src="/assets/erpnext/icons/desktop_icons/solid/erpnext_settings.svg"] {
+	content: url("/assets/tnl_theme/images/icons/erpnext_settings.svg");
+}
+
 /* --- Login-style pages: TNL brand gradient background ---
    Covers /login (and its hash-toggled forgot/signup/email-link sections,
    all served under data-path="login") and /update-password, which shares
