@@ -86,7 +86,7 @@ web_include_css = "tnl_theme.bundle.css"
 # ------------
 
 # before_install = "tnl_theme.install.before_install"
-# after_install = "tnl_theme.install.after_install"
+after_install = "tnl_theme.install.after_install"
 
 # Uninstallation
 # ------------
