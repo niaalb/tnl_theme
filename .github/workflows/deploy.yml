@@ -47,24 +47,25 @@ jobs:
 
   deploy:
     needs: build-and-push
-    runs-on: ubuntu-latest
+    # Runs directly on the production server via a self-hosted runner instead
+    # of GitHub connecting in over SSH: Hostinger's network-level firewall
+    # silently drops inbound traffic from GitHub-hosted runners' IP ranges,
+    # and there's no panel access to adjust that rule. A self-hosted runner
+    # only makes outbound connections (to GitHub, to pull the image from
+    # GHCR), which sidesteps the block entirely.
+    runs-on: self-hosted
     steps:
-      - name: Deploy to production server
-        uses: appleboy/ssh-action@v1
-        with:
-          host: ${{ secrets.DEPLOY_HOST }}
-          username: ${{ secrets.DEPLOY_USER }}
-          key: ${{ secrets.DEPLOY_SSH_KEY }}
-          script: |
-            set -e
-            cd /opt/frappe/frappe_docker
-            sed -i "s/^CUSTOM_TAG=.*/CUSTOM_TAG=${{ github.sha }}/" custom.env
-            docker compose --env-file custom.env \
-              -f compose.yaml \
-              -f overrides/compose.mariadb.yaml \
-              -f overrides/compose.redis.yaml \
-              -f overrides/compose.noproxy.yaml \
-              -f overrides/compose.migrator.yaml \
-              config > compose.custom.yaml
-            docker compose -p frappe -f compose.custom.yaml pull
-            docker compose -p frappe -f compose.custom.yaml up -d
+      - name: Deploy
+        run: |
+          set -e
+          cd /opt/frappe/frappe_docker
+          sed -i "s/^CUSTOM_TAG=.*/CUSTOM_TAG=${{ github.sha }}/" custom.env
+          docker compose --env-file custom.env \
+            -f compose.yaml \
+            -f overrides/compose.mariadb.yaml \
+            -f overrides/compose.redis.yaml \
+            -f overrides/compose.noproxy.yaml \
+            -f overrides/compose.migrator.yaml \
+            config > compose.custom.yaml
+          docker compose -p frappe -f compose.custom.yaml pull
+          docker compose -p frappe -f compose.custom.yaml up -d
