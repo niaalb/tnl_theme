@@ -133,6 +133,32 @@
 	box-shadow: 0 0 0 2px rgba(114, 75, 104, 0.15);
 }
 
+/* --- App-switcher tile icons (brand replacement) ---
+   The app-switcher/desktop-icon tiles (.app-icon) are plain <img> elements
+   pointing at each app's bundled SVG, with the colored rounded-square
+   background baked into the source image itself (confirmed by inspecting
+   erpnext's desktop_icons SVGs) — so swapping via CSS content:url() on the
+   matching src is sufficient, no separate background/wrapper styling needed. */
+.app-icon[src="/assets/erpnext/icons/desktop_icons/solid/organization.svg"] {
+	content: url("/assets/tnl_theme/images/icons/organization.png");
+}
+
+.app-icon[src="/assets/raven/raven-logo.png"] {
+	content: url("/assets/tnl_theme/images/icons/raven.png");
+}
+
+.app-icon[src="/assets/erpnext/icons/desktop_icons/solid/crm.svg"] {
+	content: url("/assets/tnl_theme/images/icons/crm.png");
+}
+
+.app-icon[src="/assets/erpnext/icons/desktop_icons/solid/projects.svg"] {
+	content: url("/assets/tnl_theme/images/icons/projects.png");
+}
+
+.app-icon[src="/assets/hrms/images/frappe-hr-logo.svg"] {
+	content: url("/assets/tnl_theme/images/icons/frappe-hr.png");
+}
+
 /* --- Login-style pages: TNL brand gradient background ---
    Covers /login (and its hash-toggled forgot/signup/email-link sections,
    all served under data-path="login") and /update-password, which shares
