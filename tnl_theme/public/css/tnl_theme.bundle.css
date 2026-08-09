@@ -110,6 +110,29 @@
 	color: var(--tnl-600);
 }
 
+/* --- Navbar brand accent (light theme) ---
+   Default navbar is a plain flat bar with no brand identity. Adding a thin
+   brand-colored bottom border ties it visually to the rest of the desk
+   without touching height/layout. */
+.navbar {
+	border-bottom: 2px solid var(--tnl-600);
+}
+
+/* --- Awesomebar (global search) focus/hover accent (light theme) ---
+   Default focus ring uses generic --primary-focus-shadow; scoping a
+   brand-tinted border+shadow here instead makes the search box read as
+   "branded" the moment a user starts typing, similar to Odoo's colored
+   search-bar focus state. */
+.navbar .search-bar .search-icon,
+.navbar .search-bar .awesomplete input {
+	transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.navbar .search-bar .awesomplete input:focus {
+	border-color: var(--tnl-600);
+	box-shadow: 0 0 0 2px rgba(114, 75, 104, 0.15);
+}
+
 /* --- Login-style pages: TNL brand gradient background ---
    Covers /login (and its hash-toggled forgot/signup/email-link sections,
    all served under data-path="login") and /update-password, which shares
