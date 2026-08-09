@@ -68,5 +68,11 @@ jobs:
             -f overrides/compose.noproxy.yaml \
             -f overrides/compose.migrator.yaml \
             config > compose.custom.yaml
-          docker compose -p frappe -f compose.custom.yaml pull
-          docker compose -p frappe -f compose.custom.yaml up -d
+          # Must match the project name the existing production stack already
+          # runs under (Compose defaults to the containing folder's name,
+          # "frappe_docker", when no -p was given originally) — using a
+          # different name here would spin up a second, parallel stack
+          # instead of updating the real one, and both would fight over the
+          # same bind-mounted database files.
+          docker compose -p frappe_docker -f compose.custom.yaml pull
+          docker compose -p frappe_docker -f compose.custom.yaml up -d
