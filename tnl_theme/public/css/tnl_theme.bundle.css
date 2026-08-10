@@ -86,6 +86,101 @@
 	background-color: rgba(114, 75, 104, 0.06);
 }
 
+/* --- Sidebar header logo (brand replacement) ---
+   The sidebar's top workspace-switcher row (name + dropdown chevron) shows
+   an icon as a plain, unclassed <img> — confirmed via inspecting the live
+   page that for ERPNext workspaces this is actually the same per-workspace
+   desktop-icon file as the app-switcher grid (e.g. organization.svg), not
+   a single fixed app logo as first assumed. Covers every workspace we
+   already have custom art for, plus Raven/Frappe HR's own app logo for
+   their respective workspaces. */
+.sidebar-header .header-logo img[src="/assets/erpnext/icons/desktop_icons/solid/organization.svg"] {
+	content: url("/assets/tnl_theme/images/icons/organization.png");
+}
+
+.sidebar-header .header-logo img[src="/assets/erpnext/icons/desktop_icons/solid/crm.svg"] {
+	content: url("/assets/tnl_theme/images/icons/crm.png");
+}
+
+.sidebar-header .header-logo img[src="/assets/erpnext/icons/desktop_icons/solid/projects.svg"] {
+	content: url("/assets/tnl_theme/images/icons/projects.png");
+}
+
+.sidebar-header .header-logo img[src="/assets/hrms/images/frappe-hr-logo.svg"] {
+	content: url("/assets/tnl_theme/images/icons/frappe-hr.png");
+}
+
+.sidebar-header .header-logo img[src="/assets/raven/raven-logo.png"] {
+	content: url("/assets/tnl_theme/images/icons/raven.png");
+}
+
+/* --- Onboarding ("Getting Started") panel icon (brand replacement) ---
+   Same plain <img src="..."> pattern as the app-switcher tiles, just in a
+   different widget — the "Getting Started" card's title icon. */
+.onb-title-icon img[src="/assets/erpnext/icons/desktop_icons/solid/organization.svg"] {
+	content: url("/assets/tnl_theme/images/icons/organization.png");
+}
+
+.onb-title-icon img[src="/assets/erpnext/icons/desktop_icons/solid/crm.svg"] {
+	content: url("/assets/tnl_theme/images/icons/crm.png");
+}
+
+.onb-title-icon img[src="/assets/erpnext/icons/desktop_icons/solid/projects.svg"] {
+	content: url("/assets/tnl_theme/images/icons/projects.png");
+}
+
+/* --- Sidebar module icon badges (brand replacement) ---
+   Reuses the same custom icons already made for the app-switcher tiles,
+   scaled down to badge size, for the workspaces we have matching artwork
+   for. Sized to roughly match the default 16px icon glyph they replace —
+   at this size a small colored rounded-square badge reads fine (same
+   pattern as Slack/Discord's mini colored icons in a nav list), so no
+   need to keep these monochrome like the untouched sidebar items. */
+.sidebar-item-container[data-id="CRM"] .sidebar-item-icon svg,
+.sidebar-item-container[data-id="Projects"] .sidebar-item-icon svg,
+.sidebar-item-container[data-id="Raven"] .sidebar-item-icon svg,
+.sidebar-item-container[data-id="Invoicing"] .sidebar-item-icon svg,
+.sidebar-item-container[data-id="Financial Reports"] .sidebar-item-icon svg,
+.sidebar-item-container[data-id="ERPNext Settings"] .sidebar-item-icon svg {
+	display: none;
+}
+
+.sidebar-item-container[data-id="CRM"] .sidebar-item-icon,
+.sidebar-item-container[data-id="Projects"] .sidebar-item-icon,
+.sidebar-item-container[data-id="Raven"] .sidebar-item-icon,
+.sidebar-item-container[data-id="Invoicing"] .sidebar-item-icon,
+.sidebar-item-container[data-id="Financial Reports"] .sidebar-item-icon,
+.sidebar-item-container[data-id="ERPNext Settings"] .sidebar-item-icon {
+	background-size: 16px 16px;
+	background-repeat: no-repeat;
+	background-position: center;
+	border-radius: 4px;
+}
+
+.sidebar-item-container[data-id="CRM"] .sidebar-item-icon {
+	background-image: url("/assets/tnl_theme/images/icons/crm.png");
+}
+
+.sidebar-item-container[data-id="Projects"] .sidebar-item-icon {
+	background-image: url("/assets/tnl_theme/images/icons/projects.png");
+}
+
+.sidebar-item-container[data-id="Raven"] .sidebar-item-icon {
+	background-image: url("/assets/tnl_theme/images/icons/raven.png");
+}
+
+.sidebar-item-container[data-id="Invoicing"] .sidebar-item-icon {
+	background-image: url("/assets/tnl_theme/images/icons/accounting/invoicing.svg");
+}
+
+.sidebar-item-container[data-id="Financial Reports"] .sidebar-item-icon {
+	background-image: url("/assets/tnl_theme/images/icons/accounting/financial_reports.svg");
+}
+
+.sidebar-item-container[data-id="ERPNext Settings"] .sidebar-item-icon {
+	background-image: url("/assets/tnl_theme/images/icons/erpnext_settings.svg");
+}
+
 /* --- Secondary button outline (light theme) ---
    Odoo's non-primary buttons read as outlined rather than a flat gray
    fill. Adding a thin border keeps the existing --control-bg fill and
