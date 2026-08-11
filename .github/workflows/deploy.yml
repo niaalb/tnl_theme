@@ -76,3 +76,11 @@ jobs:
           # same bind-mounted database files.
           docker compose -p frappe_docker -f compose.custom.yaml pull
           docker compose -p frappe_docker -f compose.custom.yaml up -d
+
+      - name: Clean up old images
+        # Every deploy pulls a fresh multi-hundred-MB image; without this the
+        # server's disk fills up within a handful of deploys (hit this
+        # exact failure: "no space left on device" mid-extract). Only
+        # removes images no longer referenced by any container, so the
+        # image just deployed is untouched.
+        run: docker image prune -af
