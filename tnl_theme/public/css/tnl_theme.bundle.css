@@ -86,6 +86,14 @@
 	background-color: rgba(114, 75, 104, 0.06);
 }
 
+/* --- Sidebar header subtitle (hide) ---
+   Shows the underlying installed app's name (e.g. "ERPNext") under the
+   workspace title — internal plumbing that undercuts the branded feel,
+   with no equivalent Settings toggle to disable it natively. */
+.sidebar-header .header-subtitle {
+	display: none;
+}
+
 /* --- Sidebar header logo (brand replacement) ---
    The sidebar's top workspace-switcher row (name + dropdown chevron) shows
    an icon as a plain, unclassed <img> — confirmed via inspecting the live
