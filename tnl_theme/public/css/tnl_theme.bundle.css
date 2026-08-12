@@ -14,8 +14,10 @@
    checkboxes, radios, links, progress bars all read from them), so overriding
    them here is the same extension point Frappe itself uses rather than a
    hardcoded selector chase. Scoped to light theme only, matching how Frappe's
-   own dark.scss keeps a separate --btn-primary for [data-theme="dark"] —
-   dark mode is intentionally left untouched for now. */
+   own dark.scss keeps a separate --btn-primary for [data-theme="dark"] — the
+   dark-mode equivalents for every rule in this file live together in the
+   "Dark theme parity" section at the bottom, rather than inline next to each
+   light rule, to keep the two passes easy to review separately. */
 :root,
 [data-theme="light"] {
 	--primary: var(--tnl-600);
@@ -37,11 +39,6 @@
 
 .btn.btn-primary:hover {
 	box-shadow: 0 2px 6px rgba(114, 75, 104, 0.35);
-}
-
-[data-theme="dark"] .btn.btn-primary {
-	box-shadow: none;
-	transition: none;
 }
 
 /* --- Sidebar active-item tint (light theme only) ---
@@ -416,4 +413,93 @@
 :is(body[data-path="login"], body[data-path="update-password"]) .page-card-actions .btn-signup:not(:disabled):focus,
 :is(body[data-path="login"], body[data-path="update-password"]) .page-card-actions .btn-signup:not(:disabled):active {
 	background: var(--tnl-800);
+}
+
+/* ============================================================
+   Dark theme parity
+   ============================================================
+   Frappe's own dark theme ships with no brand color at all — its
+   --primary/--btn-primary fall back to plain gray (see dark.scss). Every
+   light-mode rule above gets a dark-mode counterpart here, using the
+   lighter end of the palette (--tnl-200/--tnl-50) instead of --tnl-600,
+   since the deeper shades don't read clearly against Frappe's near-black
+   dark surfaces (--gray-900/--gray-800). Grouped in one section, rather
+   than inline next to each light rule, so the two passes stay easy to
+   review independently. */
+
+[data-theme="dark"] {
+	--primary: var(--tnl-200);
+	--btn-primary: var(--tnl-200);
+	--sidebar-active-color: rgba(215, 186, 205, 0.12);
+}
+
+/* Desk background: matches the client's reference screenshot — a very
+   dark navy-black base with a soft cool teal glow in the upper-left,
+   rather than a brand-purple tint (explicit client request to match
+   this look exactly, overriding the usual brand-palette-only approach).
+   Applied to .page-container, not just body — Frappe paints an opaque
+   --bg-color on that wrapper too, which otherwise sits on top of body
+   and hides the gradient entirely. */
+[data-theme="dark"] body,
+[data-theme="dark"] .page-container {
+	background:
+		radial-gradient(ellipse 900px 700px at 12% 15%, rgba(16, 92, 97, 0.4), transparent 60%),
+		#0b0c12;
+}
+
+/* Primary buttons: a light-purple fill needs dark text, the inverse of
+   the light-theme button (dark purple fill, implicit light text). */
+[data-theme="dark"] .btn.btn-primary {
+	background: var(--tnl-200);
+	color: var(--tnl-950);
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+	transition:
+		background-color 120ms ease,
+		box-shadow 120ms ease;
+}
+
+[data-theme="dark"] .btn.btn-primary:hover {
+	background: var(--tnl-50);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="dark"] .standard-sidebar-item.active-sidebar .item-anchor {
+	color: var(--tnl-200);
+}
+
+[data-theme="dark"] .widget.shortcut-widget-box:hover {
+	--icon-stroke: var(--tnl-200);
+	border-color: var(--tnl-200);
+}
+
+[data-theme="dark"] .widget.shortcut-widget-box:hover .widget-label .widget-title {
+	color: var(--tnl-200);
+}
+
+[data-theme="dark"] .links-widget-box .link-item .link-content:hover {
+	color: var(--tnl-200);
+}
+
+[data-theme="dark"] .list-row-container:hover,
+[data-theme="dark"] .list-row-container:hover .level-right,
+[data-theme="dark"] .list-row-container:focus .list-row {
+	background-color: rgba(215, 186, 205, 0.08);
+}
+
+[data-theme="dark"] .kanban-card:hover {
+	border-color: var(--tnl-200);
+}
+
+[data-theme="dark"] .form-tabs .nav-link.active {
+	border-bottom-color: var(--tnl-200);
+	color: var(--tnl-200);
+}
+
+[data-theme="dark"] .navbar {
+	border-bottom: 2px solid var(--tnl-200);
+}
+
+[data-theme="dark"] .navbar .search-bar .awesomplete input:focus {
+	border-color: var(--tnl-200);
+	box-shadow: 0 0 0 2px rgba(215, 186, 205, 0.2);
 }
