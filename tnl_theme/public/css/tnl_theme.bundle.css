@@ -1,5 +1,17 @@
 /* TNL ERPNext theme overrides */
 
+/* --- Hide Frappe-branded menu items (belt-and-suspenders CSS fallback) ---
+   The real fix is in tnl_theme/install.py (hide_frappe_help_links), which
+   sets each item's own `hidden` flag on Navbar Settings — the supported,
+   data-driven way to do this. This CSS backstop guarantees the same
+   result visually even if some menu render path doesn't honor that flag,
+   keyed off each item's icon symbol (stable) since there's no reliable
+   text-content selector in plain CSS. */
+.dropdown-menu-item:has(use[href="#icon-info"]),
+.dropdown-menu-item:has(use[href="#icon-support"]) {
+	display: none;
+}
+
 /* --- TNL brand palette (from official brand guideline) --- */
 :root {
 	--tnl-50: #ead9e4;
