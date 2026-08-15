@@ -154,6 +154,12 @@ after_migrate = "tnl_theme.install.hide_frappe_help_links"
 # Scheduled Tasks
 # ---------------
 
+scheduler_events = {
+	"daily": [
+		"tnl_theme.bid_management.tasks.check_bid_escalations",
+	],
+}
+
 # scheduler_events = {
 # 	"all": [
 # 		"tnl_theme.tasks.all"
@@ -260,4 +266,71 @@ after_migrate = "tnl_theme.install.hide_frappe_help_links"
 # ------------
 # List of apps whose translatable strings should be excluded from this app's translations.
 # ignore_translatable_strings_from = []
+
+# Fixtures
+# --------
+# Bid Management's supporting records (Roles, Workflow) are created via the
+# Desk UI / bench console during setup, not hand-written as doctype JSON —
+# exporting them here via `bench export-fixtures` captures them into
+# version control so a fresh deploy/site gets them automatically too.
+fixtures = [
+	{
+		"dt": "Role",
+		"filters": [
+			[
+				"name",
+				"in",
+				[
+					"Business Development",
+					"Sales",
+					"Bid Manager",
+					"Technical Lead",
+					"Financial Lead",
+					"Administrative Lead",
+					"Leadership",
+				],
+			]
+		],
+	},
+	{"dt": "Workflow", "filters": [["name", "=", "Bid Workflow"]]},
+	# The Workflow's states/transitions Link to these — without exporting
+	# them too, importing the Workflow fixture on a fresh site would fail
+	# on missing Link targets.
+	{
+		"dt": "Workflow State",
+		"filters": [
+			[
+				"name",
+				"in",
+				[
+					"Identified",
+					"Handed Off",
+					"Qualifying",
+					"Kickoff",
+					"In Progress",
+					"Submitted",
+					"Closed",
+				],
+			]
+		],
+	},
+	{
+		"dt": "Workflow Action Master",
+		"filters": [
+			[
+				"name",
+				"in",
+				[
+					"Hand Off to Sales",
+					"Acknowledge Receipt",
+					"Mark as Go",
+					"Mark as No-Bid",
+					"Confirm Kickoff & Assign Leads",
+					"Submit Consolidated Package",
+					"Record Outcome",
+				],
+			]
+		],
+	},
+]
 

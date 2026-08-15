@@ -1,0 +1,673 @@
+{
+ "actions": [],
+ "autoname": "BID-.YYYY.-.#####",
+ "creation": "2026-08-13 10:00:00.000000",
+ "doctype": "DocType",
+ "document_type": "Document",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "client_account",
+  "customer",
+  "crm_opportunity",
+  "column_break_details",
+  "source",
+  "bid_value",
+  "currency",
+  "section_break_stage",
+  "stage",
+  "section_break_owners",
+  "bd_owner",
+  "sales_owner",
+  "bid_manager",
+  "column_break_owners",
+  "technical_lead",
+  "financial_lead",
+  "administrative_lead",
+  "section_break_handoff",
+  "handoff_date",
+  "handoff_acknowledged_on",
+  "column_break_handoff",
+  "handoff_escalation_due",
+  "handoff_escalated",
+  "section_break_qualification",
+  "bid_no_bid_decision",
+  "qualification_reasoning",
+  "section_break_kickoff",
+  "kickoff_date",
+  "submission_deadline",
+  "section_break_technical",
+  "technical_status",
+  "technical_next_checkpoint_date",
+  "escalated_technical",
+  "section_break_financial",
+  "financial_status",
+  "financial_next_checkpoint_date",
+  "escalated_financial",
+  "section_break_administrative",
+  "administrative_status",
+  "administrative_next_checkpoint_date",
+  "escalated_administrative",
+  "section_break_consolidation",
+  "consolidated_package_ready",
+  "submission_date",
+  "section_break_outcome",
+  "outcome",
+  "outcome_reasoning",
+  "section_break_next_action",
+  "next_action",
+  "next_action_due_date",
+  "section_break_checkpoints",
+  "workstream_updates"
+ ],
+ "fields": [
+  {
+   "fieldname": "client_account",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Client / Account",
+   "permlevel": 4,
+   "reqd": 1
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "label": "Customer",
+   "options": "Customer",
+   "permlevel": 4
+  },
+  {
+   "fieldname": "crm_opportunity",
+   "fieldtype": "Link",
+   "label": "Linked CRM Opportunity",
+   "options": "Opportunity",
+   "permlevel": 4
+  },
+  {
+   "fieldname": "column_break_details",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "source",
+   "fieldtype": "Select",
+   "label": "Source",
+   "options": "RFP\nReferral\nMarket Lead\nOther",
+   "permlevel": 4,
+   "reqd": 1
+  },
+  {
+   "fieldname": "bid_value",
+   "fieldtype": "Currency",
+   "label": "Value",
+   "options": "currency",
+   "permlevel": 4
+  },
+  {
+   "default": "INR",
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "label": "Currency",
+   "options": "Currency",
+   "permlevel": 4
+  },
+  {
+   "fieldname": "section_break_stage",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "Identified",
+   "fieldname": "stage",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Stage",
+   "options": "Identified\nHanded Off\nQualifying\nKickoff\nIn Progress\nSubmitted\nClosed",
+   "permlevel": 4,
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_owners",
+   "fieldtype": "Section Break",
+   "label": "Ownership"
+  },
+  {
+   "fieldname": "bd_owner",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "BD Owner",
+   "options": "User",
+   "permlevel": 4,
+   "reqd": 1
+  },
+  {
+   "fieldname": "sales_owner",
+   "fieldtype": "Link",
+   "label": "Sales Owner",
+   "options": "User",
+   "permlevel": 4
+  },
+  {
+   "fieldname": "bid_manager",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Bid Manager",
+   "options": "User",
+   "permlevel": 4
+  },
+  {
+   "fieldname": "column_break_owners",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "technical_lead",
+   "fieldtype": "Link",
+   "label": "Technical Lead",
+   "options": "User",
+   "permlevel": 4
+  },
+  {
+   "fieldname": "financial_lead",
+   "fieldtype": "Link",
+   "label": "Financial Lead",
+   "options": "User",
+   "permlevel": 4
+  },
+  {
+   "fieldname": "administrative_lead",
+   "fieldtype": "Link",
+   "label": "Administrative Lead",
+   "options": "User",
+   "permlevel": 4
+  },
+  {
+   "fieldname": "section_break_handoff",
+   "fieldtype": "Section Break",
+   "label": "Hand-off"
+  },
+  {
+   "fieldname": "handoff_date",
+   "fieldtype": "Date",
+   "label": "Hand-off Date",
+   "permlevel": 4,
+   "read_only": 1
+  },
+  {
+   "fieldname": "handoff_acknowledged_on",
+   "fieldtype": "Datetime",
+   "label": "Sales Acknowledged On",
+   "permlevel": 4,
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_handoff",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "handoff_escalation_due",
+   "fieldtype": "Date",
+   "hidden": 1,
+   "label": "Hand-off Escalation Due",
+   "permlevel": 4,
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "handoff_escalated",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Hand-off Escalated",
+   "permlevel": 4,
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_qualification",
+   "fieldtype": "Section Break",
+   "label": "Qualification"
+  },
+  {
+   "fieldname": "bid_no_bid_decision",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Bid / No-Bid Decision",
+   "options": "\nBid\nNo-Bid",
+   "permlevel": 4
+  },
+  {
+   "fieldname": "qualification_reasoning",
+   "fieldtype": "Small Text",
+   "label": "Qualification Reasoning",
+   "permlevel": 4
+  },
+  {
+   "fieldname": "section_break_kickoff",
+   "fieldtype": "Section Break",
+   "label": "Kickoff"
+  },
+  {
+   "fieldname": "kickoff_date",
+   "fieldtype": "Date",
+   "label": "Kickoff Date",
+   "permlevel": 4
+  },
+  {
+   "fieldname": "submission_deadline",
+   "fieldtype": "Date",
+   "label": "Submission Deadline",
+   "permlevel": 4
+  },
+  {
+   "fieldname": "section_break_technical",
+   "fieldtype": "Section Break",
+   "label": "Technical Workstream"
+  },
+  {
+   "default": "Not Started",
+   "fieldname": "technical_status",
+   "fieldtype": "Select",
+   "label": "Technical Workstream Status",
+   "options": "Not Started\nIn Progress\nCompleted\nBlocked\nOn Hold",
+   "permlevel": 1
+  },
+  {
+   "fieldname": "technical_next_checkpoint_date",
+   "fieldtype": "Date",
+   "label": "Technical Next Checkpoint",
+   "permlevel": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "escalated_technical",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Technical Escalated",
+   "permlevel": 4,
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_financial",
+   "fieldtype": "Section Break",
+   "label": "Financial Workstream"
+  },
+  {
+   "default": "Not Started",
+   "fieldname": "financial_status",
+   "fieldtype": "Select",
+   "label": "Financial Workstream Status",
+   "options": "Not Started\nIn Progress\nCompleted\nBlocked\nOn Hold",
+   "permlevel": 2
+  },
+  {
+   "fieldname": "financial_next_checkpoint_date",
+   "fieldtype": "Date",
+   "label": "Financial Next Checkpoint",
+   "permlevel": 2
+  },
+  {
+   "default": "0",
+   "fieldname": "escalated_financial",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Financial Escalated",
+   "permlevel": 4,
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_administrative",
+   "fieldtype": "Section Break",
+   "label": "Administrative Workstream"
+  },
+  {
+   "default": "Not Started",
+   "fieldname": "administrative_status",
+   "fieldtype": "Select",
+   "label": "Administrative Workstream Status",
+   "options": "Not Started\nIn Progress\nCompleted\nBlocked\nOn Hold",
+   "permlevel": 3
+  },
+  {
+   "fieldname": "administrative_next_checkpoint_date",
+   "fieldtype": "Date",
+   "label": "Administrative Next Checkpoint",
+   "permlevel": 3
+  },
+  {
+   "default": "0",
+   "fieldname": "escalated_administrative",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Administrative Escalated",
+   "permlevel": 4,
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_consolidation",
+   "fieldtype": "Section Break",
+   "label": "Consolidation & Submission"
+  },
+  {
+   "default": "0",
+   "fieldname": "consolidated_package_ready",
+   "fieldtype": "Check",
+   "label": "Consolidated Package Ready",
+   "permlevel": 4
+  },
+  {
+   "fieldname": "submission_date",
+   "fieldtype": "Date",
+   "label": "Submission Date",
+   "permlevel": 4
+  },
+  {
+   "fieldname": "section_break_outcome",
+   "fieldtype": "Section Break",
+   "label": "Outcome"
+  },
+  {
+   "fieldname": "outcome",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Outcome",
+   "options": "\nWon\nLost\nOn Hold",
+   "permlevel": 4
+  },
+  {
+   "fieldname": "outcome_reasoning",
+   "fieldtype": "Small Text",
+   "label": "Outcome Reasoning",
+   "permlevel": 4
+  },
+  {
+   "fieldname": "section_break_next_action",
+   "fieldtype": "Section Break",
+   "label": "Next Action"
+  },
+  {
+   "fieldname": "next_action",
+   "fieldtype": "Small Text",
+   "label": "Next Action",
+   "permlevel": 4
+  },
+  {
+   "fieldname": "next_action_due_date",
+   "fieldtype": "Date",
+   "label": "Next Action Due Date",
+   "permlevel": 4
+  },
+  {
+   "fieldname": "section_break_checkpoints",
+   "fieldtype": "Section Break",
+   "label": "Checkpoint Log"
+  },
+  {
+   "fieldname": "workstream_updates",
+   "fieldtype": "Table",
+   "label": "Workstream Checkpoint Log",
+   "options": "Bid Workstream Update",
+   "permlevel": 0
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-08-13 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Bid Management",
+ "name": "Bid",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "role": "Business Development",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "share": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "report": 1
+  },
+  {
+   "role": "Sales",
+   "read": 1,
+   "write": 1,
+   "share": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "report": 1
+  },
+  {
+   "role": "Bid Manager",
+   "read": 1,
+   "write": 1,
+   "share": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "report": 1
+  },
+  {
+   "role": "Technical Lead",
+   "read": 1,
+   "write": 1,
+   "email": 1,
+   "print": 1
+  },
+  {
+   "role": "Financial Lead",
+   "read": 1,
+   "write": 1,
+   "email": 1,
+   "print": 1
+  },
+  {
+   "role": "Administrative Lead",
+   "read": 1,
+   "write": 1,
+   "email": 1,
+   "print": 1
+  },
+  {
+   "role": "Leadership",
+   "read": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "report": 1
+  },
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "share": 1,
+   "email": 1,
+   "export": 1,
+   "import": 1,
+   "print": 1,
+   "report": 1
+  },
+  {
+   "role": "Business Development",
+   "permlevel": 1,
+   "read": 1
+  },
+  {
+   "role": "Sales",
+   "permlevel": 1,
+   "read": 1
+  },
+  {
+   "role": "Financial Lead",
+   "permlevel": 1,
+   "read": 1
+  },
+  {
+   "role": "Administrative Lead",
+   "permlevel": 1,
+   "read": 1
+  },
+  {
+   "role": "Leadership",
+   "permlevel": 1,
+   "read": 1
+  },
+  {
+   "role": "Technical Lead",
+   "permlevel": 1,
+   "read": 1,
+   "write": 1
+  },
+  {
+   "role": "Bid Manager",
+   "permlevel": 1,
+   "read": 1,
+   "write": 1
+  },
+  {
+   "role": "System Manager",
+   "permlevel": 1,
+   "read": 1,
+   "write": 1
+  },
+  {
+   "role": "Business Development",
+   "permlevel": 2,
+   "read": 1
+  },
+  {
+   "role": "Sales",
+   "permlevel": 2,
+   "read": 1
+  },
+  {
+   "role": "Technical Lead",
+   "permlevel": 2,
+   "read": 1
+  },
+  {
+   "role": "Administrative Lead",
+   "permlevel": 2,
+   "read": 1
+  },
+  {
+   "role": "Leadership",
+   "permlevel": 2,
+   "read": 1
+  },
+  {
+   "role": "Financial Lead",
+   "permlevel": 2,
+   "read": 1,
+   "write": 1
+  },
+  {
+   "role": "Bid Manager",
+   "permlevel": 2,
+   "read": 1,
+   "write": 1
+  },
+  {
+   "role": "System Manager",
+   "permlevel": 2,
+   "read": 1,
+   "write": 1
+  },
+  {
+   "role": "Business Development",
+   "permlevel": 3,
+   "read": 1
+  },
+  {
+   "role": "Sales",
+   "permlevel": 3,
+   "read": 1
+  },
+  {
+   "role": "Technical Lead",
+   "permlevel": 3,
+   "read": 1
+  },
+  {
+   "role": "Financial Lead",
+   "permlevel": 3,
+   "read": 1
+  },
+  {
+   "role": "Leadership",
+   "permlevel": 3,
+   "read": 1
+  },
+  {
+   "role": "Administrative Lead",
+   "permlevel": 3,
+   "read": 1,
+   "write": 1
+  },
+  {
+   "role": "Bid Manager",
+   "permlevel": 3,
+   "read": 1,
+   "write": 1
+  },
+  {
+   "role": "System Manager",
+   "permlevel": 3,
+   "read": 1,
+   "write": 1
+  },
+  {
+   "role": "Technical Lead",
+   "permlevel": 4,
+   "read": 1
+  },
+  {
+   "role": "Financial Lead",
+   "permlevel": 4,
+   "read": 1
+  },
+  {
+   "role": "Administrative Lead",
+   "permlevel": 4,
+   "read": 1
+  },
+  {
+   "role": "Leadership",
+   "permlevel": 4,
+   "read": 1
+  },
+  {
+   "role": "Business Development",
+   "permlevel": 4,
+   "read": 1,
+   "write": 1
+  },
+  {
+   "role": "Sales",
+   "permlevel": 4,
+   "read": 1,
+   "write": 1
+  },
+  {
+   "role": "Bid Manager",
+   "permlevel": 4,
+   "read": 1,
+   "write": 1
+  },
+  {
+   "role": "System Manager",
+   "permlevel": 4,
+   "read": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "client_account",
+ "track_changes": 1
+}

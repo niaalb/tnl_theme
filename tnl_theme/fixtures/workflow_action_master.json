@@ -1,0 +1,51 @@
+[
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2026-08-13 21:44:59.421321",
+  "name": "Hand Off to Sales",
+  "workflow_action_name": "Hand Off to Sales"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2026-08-13 21:44:59.432489",
+  "name": "Acknowledge Receipt",
+  "workflow_action_name": "Acknowledge Receipt"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2026-08-13 21:44:59.440364",
+  "name": "Mark as Go",
+  "workflow_action_name": "Mark as Go"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2026-08-13 21:44:59.446183",
+  "name": "Mark as No-Bid",
+  "workflow_action_name": "Mark as No-Bid"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2026-08-13 21:44:59.453208",
+  "name": "Confirm Kickoff & Assign Leads",
+  "workflow_action_name": "Confirm Kickoff & Assign Leads"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2026-08-13 21:44:59.463050",
+  "name": "Submit Consolidated Package",
+  "workflow_action_name": "Submit Consolidated Package"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2026-08-13 21:44:59.471151",
+  "name": "Record Outcome",
+  "workflow_action_name": "Record Outcome"
+ }
+]

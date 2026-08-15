@@ -1,0 +1,46 @@
+{
+ "app": "tnl_theme",
+ "bg_color": "gray",
+ "creation": "2026-08-14 22:48:04.661140",
+ "docstatus": 0,
+ "doctype": "Desktop Icon",
+ "hidden": 0,
+ "icon": "bid_management",
+ "icon_type": "Link",
+ "idx": 0,
+ "label": "Bid Management",
+ "link_to": "Bid Management",
+ "link_type": "Workspace Sidebar",
+ "modified": "2026-08-14 23:14:44.060356",
+ "modified_by": "Administrator",
+ "name": "Bid Management",
+ "owner": "Administrator",
+ "restrict_removal": 0,
+ "roles": [
+  {
+   "role": "Business Development"
+  },
+  {
+   "role": "Sales"
+  },
+  {
+   "role": "Bid Manager"
+  },
+  {
+   "role": "Technical Lead"
+  },
+  {
+   "role": "Financial Lead"
+  },
+  {
+   "role": "Administrative Lead"
+  },
+  {
+   "role": "Leadership"
+  },
+  {
+   "role": "System Manager"
+  }
+ ],
+ "standard": 1
+}

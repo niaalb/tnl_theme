@@ -1,0 +1,92 @@
+{
+ "app": "tnl_theme",
+ "charts": [],
+ "content": "[{\"id\":\"nc1open\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Open Bids\",\"col\":4}},{\"id\":\"nc2won\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Bids Won\",\"col\":4}},{\"id\":\"nc3overdue\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Overdue Hand-offs\",\"col\":4}},{\"id\":\"sp1\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"sc1allbids\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"All Bids\",\"col\":3}},{\"id\":\"hd1reports\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Reports</b></span>\",\"col\":12}},{\"id\":\"sc2funnel\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bid Pipeline Funnel\",\"col\":3}},{\"id\":\"sc3sla\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bid Handoff SLA\",\"col\":3}},{\"id\":\"sc4sub\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bid Submission Performance\",\"col\":3}},{\"id\":\"sc5win\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bid Win Rate\",\"col\":3}},{\"id\":\"sc6incidents\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bid Workstream Incidents\",\"col\":3}}]",
+ "creation": "2026-08-13 00:00:00",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "briefcase",
+ "idx": 0,
+ "is_hidden": 0,
+ "label": "Bid Management",
+ "links": [],
+ "modified": "2026-08-14 23:14:43.801019",
+ "modified_by": "Administrator",
+ "module": "Bid Management",
+ "name": "Bid Management",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "restrict_to_domain": "",
+ "roles": [
+  {
+   "role": "Business Development"
+  },
+  {
+   "role": "Sales"
+  },
+  {
+   "role": "Bid Manager"
+  },
+  {
+   "role": "Technical Lead"
+  },
+  {
+   "role": "Financial Lead"
+  },
+  {
+   "role": "Administrative Lead"
+  },
+  {
+   "role": "Leadership"
+  },
+  {
+   "role": "System Manager"
+  }
+ ],
+ "sequence_id": 1.0,
+ "shortcuts": [
+  {
+   "label": "All Bids",
+   "link_to": "Bid",
+   "type": "DocType"
+  },
+  {
+   "label": "Bid Pipeline Funnel",
+   "link_to": "Bid Pipeline Funnel",
+   "report_ref_doctype": "Bid",
+   "type": "Report"
+  },
+  {
+   "label": "Bid Handoff SLA",
+   "link_to": "Bid Handoff SLA",
+   "report_ref_doctype": "Bid",
+   "type": "Report"
+  },
+  {
+   "label": "Bid Submission Performance",
+   "link_to": "Bid Submission Performance",
+   "report_ref_doctype": "Bid",
+   "type": "Report"
+  },
+  {
+   "label": "Bid Win Rate",
+   "link_to": "Bid Win Rate",
+   "report_ref_doctype": "Bid",
+   "type": "Report"
+  },
+  {
+   "label": "Bid Workstream Incidents",
+   "link_to": "Bid Workstream Incidents",
+   "report_ref_doctype": "Bid",
+   "type": "Report"
+  }
+ ],
+ "title": "Bid Management",
+ "type": "Workspace"
+}
