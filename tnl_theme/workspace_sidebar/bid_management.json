@@ -1,6 +1,6 @@
 {
  "app": "tnl_theme",
- "creation": "2026-08-14 00:00:00.000000",
+ "creation": "2026-08-14 00:00:00",
  "docstatus": 0,
  "doctype": "Workspace Sidebar",
  "header_icon": "briefcase",
@@ -14,7 +14,7 @@
    "keep_closed": 0,
    "label": "Home",
    "link_to": "Bid Management",
-   "link_type": "Dashboard",
+   "link_type": "Workspace",
    "show_arrow": 0,
    "type": "Link"
   },
@@ -97,7 +97,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-08-14 00:00:00.000000",
+ "modified": "2026-08-16 18:27:44.540685",
  "modified_by": "Administrator",
  "module": "Bid Management",
  "name": "Bid Management",
