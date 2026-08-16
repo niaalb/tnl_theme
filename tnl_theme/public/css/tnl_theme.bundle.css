@@ -351,6 +351,58 @@
 	content: url("/assets/tnl_theme/images/icons/erpnext_modules/assets.svg");
 }
 
+/* --- "Frappe HR" tile label, renamed to "HR" ---
+   The tile's label text comes straight from the Desktop Icon record's
+   `label` field with no separate class to target, so the tile itself
+   (identified by its stable data-id, which mirrors that same label) is
+   the only reliable hook. Collapsing the real text to font-size:0 and
+   restoring size only on the ::after keeps the tile's layout/tooltip
+   markup untouched — this only swaps what's visually painted. */
+.desktop-icon[data-id="Frappe HR"] .icon-title {
+	font-size: 0;
+}
+
+.desktop-icon[data-id="Frappe HR"] .icon-title::after {
+	content: "HR";
+	font-size: var(--text-md);
+	font-weight: var(--weight-semibold);
+	/* .icon-title's own line-height is a % value, so it computes to 0
+	   alongside the 0 font-size above and gets inherited as that already-
+	   computed 0px by this pseudo-element — recompute it here against the
+	   restored font-size, or the letters render clipped to a sliver. */
+	line-height: var(--desktop-icon-line-height);
+}
+
+/* --- "ERPNext Settings" tile label, renamed to "Settings" --- */
+.desktop-icon[data-id="ERPNext Settings"] .icon-title {
+	font-size: 0;
+}
+
+.desktop-icon[data-id="ERPNext Settings"] .icon-title::after {
+	content: "Settings";
+	font-size: var(--text-md);
+	font-weight: var(--weight-semibold);
+	line-height: var(--desktop-icon-line-height);
+}
+
+/* --- Sidebar header title, "ERPNext Settings" -> "Settings" ---
+   .body-sidebar gets a data-title attribute matching the workspace title
+   (set in sidebar.js), which is the only per-workspace hook available
+   here since .header-title itself is a single template shared by every
+   workspace. Same font-size:0 + ::after swap as the tile label above,
+   with font-size/line-height on the pseudo restored to match this
+   component's own values (sidebar_header.scss), not the tile's. */
+.body-sidebar[data-title="ERPNext Settings"] .header-title {
+	font-size: 0;
+}
+
+.body-sidebar[data-title="ERPNext Settings"] .header-title::after {
+	content: "Settings";
+	font-size: var(--text-md);
+	font-weight: 500;
+	line-height: 1.2;
+}
+
 /* --- Login-style pages: TNL brand gradient background ---
    Covers /login (and its hash-toggled forgot/signup/email-link sections,
    all served under data-path="login") and /update-password, which shares
