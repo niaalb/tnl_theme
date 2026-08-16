@@ -34,6 +34,9 @@ class Bid(Document):
 		self._track_handoff_timestamps()
 		self._reset_escalation_flags_on_new_checkpoint()
 
+	def on_update(self):
+		self._notify_on_stage_change()
+
 	def _enforce_workstream_ownership(self):
 		user = frappe.session.user
 		if user == "Administrator" or "System Manager" in frappe.get_roles(user):
@@ -87,3 +90,79 @@ class Bid(Document):
 		for date_field, flag_field in CHECKPOINT_ESCALATION_FLAG.items():
 			if self.get(date_field) != before.get(date_field):
 				self.set(flag_field, 0)
+
+	def _notify_on_stage_change(self):
+		"""Ping the right person the moment a bid actually lands on their
+		desk, rather than leaving every hand-off/assignment silent until
+		someone happens to notice the stage changed. Deliberately separate
+		from tasks.py's overdue-escalation emails — this covers the normal,
+		on-time path; escalations remain the only thing that goes to email,
+		since outgoing mail isn't configured on every site this runs on and
+		these routine pings need to work without it."""
+		before = self.get_doc_before_save()
+		if not before or before.stage == self.stage:
+			return
+
+		if self.stage == "Handed Off":
+			self._assign_todo(
+				[self.sales_owner],
+				_("Bid {0} ({1}) has been handed off to you — please acknowledge receipt.").format(
+					self.name, self.client_account
+				),
+			)
+		elif self.stage == "In Progress":
+			for user, role_label in (
+				(self.technical_lead, _("Technical Lead")),
+				(self.financial_lead, _("Financial Lead")),
+				(self.administrative_lead, _("Administrative Lead")),
+			):
+				self._assign_todo(
+					[user],
+					_("You've been assigned as {0} on Bid {1} ({2}).").format(
+						role_label, self.name, self.client_account
+					),
+				)
+		elif self.stage == "Submitted":
+			self._notify_alert(
+				[self.sales_owner],
+				_("Bid {0} ({1}) has been submitted to the client.").format(self.name, self.client_account),
+			)
+		elif self.stage == "Closed" and self.outcome:
+			self._notify_alert(
+				[self.bid_manager, self.technical_lead, self.financial_lead, self.administrative_lead],
+				_("Outcome recorded for Bid {0} ({1}): {2}.").format(
+					self.name, self.client_account, self.outcome
+				),
+			)
+
+	def _assign_todo(self, users, description):
+		from frappe.desk.form.assign_to import add as assign_to_add
+
+		users = [u for u in users if u]
+		if not users:
+			return
+		assign_to_add(
+			{
+				"assign_to": users,
+				"doctype": self.doctype,
+				"name": self.name,
+				"description": description,
+			}
+		)
+
+	def _notify_alert(self, users, subject):
+		from frappe.desk.doctype.notification_log.notification_log import enqueue_create_notification
+
+		users = [u for u in users if u]
+		if not users:
+			return
+		enqueue_create_notification(
+			users,
+			{
+				"type": "Alert",
+				"document_type": self.doctype,
+				"document_name": self.name,
+				"subject": subject,
+				"from_user": frappe.session.user,
+			},
+		)
