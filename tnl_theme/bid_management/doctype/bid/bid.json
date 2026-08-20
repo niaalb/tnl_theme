@@ -7,9 +7,10 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "tab_overview",
   "client_account",
   "customer",
-  "crm_opportunity",
+  "crm_deal",
   "column_break_details",
   "source",
   "bid_value",
@@ -24,6 +25,7 @@
   "technical_lead",
   "financial_lead",
   "administrative_lead",
+  "tab_handoff",
   "section_break_handoff",
   "handoff_date",
   "handoff_acknowledged_on",
@@ -33,6 +35,7 @@
   "section_break_qualification",
   "bid_no_bid_decision",
   "qualification_reasoning",
+  "tab_kickoff",
   "section_break_kickoff",
   "kickoff_date",
   "submission_deadline",
@@ -48,6 +51,7 @@
   "administrative_status",
   "administrative_next_checkpoint_date",
   "escalated_administrative",
+  "tab_outcome",
   "section_break_consolidation",
   "consolidated_package_ready",
   "submission_date",
@@ -57,10 +61,16 @@
   "section_break_next_action",
   "next_action",
   "next_action_due_date",
+  "tab_checkpoints",
   "section_break_checkpoints",
   "workstream_updates"
  ],
  "fields": [
+  {
+   "fieldname": "tab_overview",
+   "fieldtype": "Tab Break",
+   "label": "Overview"
+  },
   {
    "fieldname": "client_account",
    "fieldtype": "Data",
@@ -78,10 +88,10 @@
    "permlevel": 4
   },
   {
-   "fieldname": "crm_opportunity",
+   "fieldname": "crm_deal",
    "fieldtype": "Link",
-   "label": "Linked CRM Opportunity",
-   "options": "Opportunity",
+   "label": "Linked CRM Deal",
+   "options": "CRM Deal",
    "permlevel": 4
   },
   {
@@ -182,6 +192,11 @@
    "permlevel": 4
   },
   {
+   "fieldname": "tab_handoff",
+   "fieldtype": "Tab Break",
+   "label": "Hand-off & Qualification"
+  },
+  {
    "fieldname": "section_break_handoff",
    "fieldtype": "Section Break",
    "label": "Hand-off"
@@ -239,6 +254,11 @@
    "fieldtype": "Small Text",
    "label": "Qualification Reasoning",
    "permlevel": 4
+  },
+  {
+   "fieldname": "tab_kickoff",
+   "fieldtype": "Tab Break",
+   "label": "Kickoff & Workstreams"
   },
   {
    "fieldname": "section_break_kickoff",
@@ -342,6 +362,11 @@
    "read_only": 1
   },
   {
+   "fieldname": "tab_outcome",
+   "fieldtype": "Tab Break",
+   "label": "Consolidation & Outcome"
+  },
+  {
    "fieldname": "section_break_consolidation",
    "fieldtype": "Section Break",
    "label": "Consolidation & Submission"
@@ -395,6 +420,11 @@
    "fieldtype": "Date",
    "label": "Next Action Due Date",
    "permlevel": 4
+  },
+  {
+   "fieldname": "tab_checkpoints",
+   "fieldtype": "Tab Break",
+   "label": "Checkpoint Log"
   },
   {
    "fieldname": "section_break_checkpoints",

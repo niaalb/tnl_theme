@@ -9,13 +9,12 @@ from frappe.utils import add_days, today
 from tnl_theme.bid_management import tasks
 from tnl_theme.bid_management.utils import add_business_days
 
-# Bid's `customer`/`crm_opportunity` Link fields are optional and never
+# Bid's `customer`/`crm_deal` Link fields are optional and never
 # populated in these tests, but IntegrationTestCase auto-generates test
 # fixtures for every Link field by default — pulling in Customer's and
-# Opportunity's own dependency chains (down to Fiscal Year), which is
-# unnecessary overhead here and can collide with real Fiscal Year data
-# on a non-throwaway site.
-IGNORE_TEST_RECORD_DEPENDENCIES = ["Customer", "Opportunity"]
+# CRM Deal's own dependency chains, which is unnecessary overhead here
+# and can collide with real data on a non-throwaway site.
+IGNORE_TEST_RECORD_DEPENDENCIES = ["Customer", "CRM Deal"]
 
 TEST_USERS = {
 	"bd@bidtest.com": "Business Development",

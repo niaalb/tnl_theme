@@ -1,0 +1,50 @@
+[
+ {
+  "doctype": "Kanban Board",
+  "name": "Bid Pipeline",
+  "kanban_board_name": "Bid Pipeline",
+  "reference_doctype": "Bid",
+  "field_name": "stage",
+  "private": 0,
+  "show_labels": 0,
+  "filters": "[]",
+  "fields": "[\"client_account\", \"bid_value\", \"bd_owner\", \"sales_owner\", \"bid_manager\", \"outcome\"]",
+  "columns": [
+   {
+    "column_name": "Identified",
+    "status": "Active",
+    "indicator": "Gray"
+   },
+   {
+    "column_name": "Handed Off",
+    "status": "Active",
+    "indicator": "Orange"
+   },
+   {
+    "column_name": "Qualifying",
+    "status": "Active",
+    "indicator": "Yellow"
+   },
+   {
+    "column_name": "Kickoff",
+    "status": "Active",
+    "indicator": "Blue"
+   },
+   {
+    "column_name": "In Progress",
+    "status": "Active",
+    "indicator": "Light Blue"
+   },
+   {
+    "column_name": "Submitted",
+    "status": "Active",
+    "indicator": "Purple"
+   },
+   {
+    "column_name": "Closed",
+    "status": "Active",
+    "indicator": "Green"
+   }
+  ]
+ }
+]

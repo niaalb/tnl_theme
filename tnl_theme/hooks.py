@@ -8,7 +8,10 @@ app_license = "mit"
 # Apps
 # ------------------
 
-# required_apps = []
+# Bid Management's CRM integration (create_bid_from_deal, the "Create Bid"
+# Form Script button on CRM Deal, and Bid.crm_deal) all depend on the CRM
+# Deal doctype existing, so this app cannot install without it.
+required_apps = ["crm"]
 
 # Each item in the list will be shown as an app in the apps page
 # add_to_apps_screen = [
@@ -89,9 +92,13 @@ web_include_css = "tnl_theme.bundle.css"
 after_install = "tnl_theme.install.after_install"
 
 # Re-applies idempotent settings fixups (e.g. hiding Frappe-branded help
-# links) on every deploy, not just on fresh installs — after_install alone
-# wouldn't touch a site that already existed before this hook was added.
-after_migrate = "tnl_theme.install.hide_frappe_help_links"
+# links, retiring the legacy CRM workspace) on every deploy, not just on
+# fresh installs — after_install alone wouldn't touch a site that already
+# existed before one of these hooks was added.
+after_migrate = [
+	"tnl_theme.install.hide_frappe_help_links",
+	"tnl_theme.install.retire_legacy_crm_workspace",
+]
 
 # Uninstallation
 # ------------
@@ -332,5 +339,7 @@ fixtures = [
 			]
 		],
 	},
+	{"dt": "Kanban Board", "filters": [["name", "=", "Bid Pipeline"]]},
+	{"dt": "CRM Form Script", "filters": [["name", "=", "Create Bid from Deal"]]},
 ]
 

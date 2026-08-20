@@ -1,7 +1,16 @@
 {
  "app": "tnl_theme",
- "charts": [],
- "content": "[{\"id\":\"nc1open\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Open Bids\",\"col\":4}},{\"id\":\"nc2won\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Bids Won\",\"col\":4}},{\"id\":\"nc3overdue\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Overdue Hand-offs\",\"col\":4}},{\"id\":\"sp1\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"sc1allbids\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"All Bids\",\"col\":3}},{\"id\":\"hd1reports\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Reports</b></span>\",\"col\":12}},{\"id\":\"sc2funnel\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bid Pipeline Funnel\",\"col\":3}},{\"id\":\"sc3sla\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bid Handoff SLA\",\"col\":3}},{\"id\":\"sc4sub\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bid Submission Performance\",\"col\":3}},{\"id\":\"sc5win\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bid Win Rate\",\"col\":3}},{\"id\":\"sc6incidents\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bid Workstream Incidents\",\"col\":3}}]",
+ "charts": [
+  {
+   "chart_name": "Bid Pipeline by Stage",
+   "label": "Bid Pipeline by Stage"
+  },
+  {
+   "chart_name": "Bids by Outcome",
+   "label": "Bids by Outcome"
+  }
+ ],
+ "content": "[{\"id\":\"nc1open\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Open Bids\",\"col\":4}},{\"id\":\"nc2won\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Bids Won\",\"col\":4}},{\"id\":\"nc3overdue\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Overdue Hand-offs\",\"col\":4}},{\"id\":\"ch1stage\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Bid Pipeline by Stage\",\"col\":8}},{\"id\":\"ch2outcome\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Bids by Outcome\",\"col\":4}},{\"id\":\"sp1\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"sc0kanban\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bid Pipeline (Kanban)\",\"col\":3}},{\"id\":\"sc1allbids\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"All Bids\",\"col\":3}},{\"id\":\"hd1reports\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Reports</b></span>\",\"col\":12}},{\"id\":\"sc2funnel\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bid Pipeline Funnel\",\"col\":3}},{\"id\":\"sc3sla\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bid Handoff SLA\",\"col\":3}},{\"id\":\"sc4sub\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bid Submission Performance\",\"col\":3}},{\"id\":\"sc5win\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bid Win Rate\",\"col\":3}},{\"id\":\"sc6incidents\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bid Workstream Incidents\",\"col\":3}}]",
  "creation": "2026-08-13 00:00:00",
  "custom_blocks": [],
  "docstatus": 0,
@@ -13,7 +22,7 @@
  "is_hidden": 0,
  "label": "Bid Management",
  "links": [],
- "modified": "2026-08-14 23:14:43.801019",
+ "modified": "2026-08-19 21:45:00.000000",
  "modified_by": "Administrator",
  "module": "Bid Management",
  "name": "Bid Management",
@@ -51,6 +60,14 @@
  ],
  "sequence_id": 1.0,
  "shortcuts": [
+  {
+   "label": "Bid Pipeline (Kanban)",
+   "link_to": "Bid",
+   "type": "DocType",
+   "doc_view": "Kanban",
+   "kanban_board": "Bid Pipeline",
+   "icon": "kanban"
+  },
   {
    "label": "All Bids",
    "link_to": "Bid",

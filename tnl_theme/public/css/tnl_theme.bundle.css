@@ -1,5 +1,6 @@
 /* TNL ERPNext theme overrides */
 
+
 /* --- Hide Frappe-branded menu items (belt-and-suspenders CSS fallback) ---
    The real fix is in tnl_theme/install.py (hide_frappe_help_links), which
    sets each item's own `hidden` flag on Navbar Settings — the supported,
@@ -271,6 +272,14 @@
 	content: url("/assets/tnl_theme/images/icons/frappe-hr.png");
 }
 
+/* --- "CRM Portal" (Frappe CRM) app tile icon ---
+   Reuses the same purple CRM glyph already made for ERPNext's own CRM
+   module tile above, rather than a new asset — same product concept
+   (CRM), so the same icon reads as intentional instead of mismatched. */
+.app-icon[src="/assets/crm/images/logo.svg"] {
+	content: url("/assets/tnl_theme/images/icons/crm.png");
+}
+
 /* --- Accounting sub-menu tile icons (recolor, not redesign) ---
    These 9 tiles (the "Accounting" group's children) all share the exact
    same source artwork, just with erpnext's blue (#0289F7) swapped for the
@@ -385,6 +394,25 @@
 	line-height: var(--desktop-icon-line-height);
 }
 
+/* --- "Frappe CRM" tile label, renamed to "CRM Portal" ---
+   Not renamed to plain "CRM": that collides with ERPNext's own CRM
+   *module* (Campaign, Opportunity, etc. still declare module="CRM"),
+   which resolves navigation through a module-keyed fallback rather than
+   this workspace — see tnl_theme/install.py's retire_legacy_crm_workspace
+   for the full story. This is a label-only swap for exactly that reason:
+   the underlying Workspace/Desktop Icon records stay named "Frappe CRM",
+   so nothing here can reopen that collision. */
+.desktop-icon[data-id="Frappe CRM"] .icon-title {
+	font-size: 0;
+}
+
+.desktop-icon[data-id="Frappe CRM"] .icon-title::after {
+	content: "CRM Portal";
+	font-size: var(--text-md);
+	font-weight: var(--weight-semibold);
+	line-height: var(--desktop-icon-line-height);
+}
+
 /* --- Sidebar header title, "ERPNext Settings" -> "Settings" ---
    .body-sidebar gets a data-title attribute matching the workspace title
    (set in sidebar.js), which is the only per-workspace hook available
@@ -398,6 +426,18 @@
 
 .body-sidebar[data-title="ERPNext Settings"] .header-title::after {
 	content: "Settings";
+	font-size: var(--text-md);
+	font-weight: 500;
+	line-height: 1.2;
+}
+
+/* --- Sidebar header title, "Frappe CRM" -> "CRM Portal" --- */
+.body-sidebar[data-title="Frappe CRM"] .header-title {
+	font-size: 0;
+}
+
+.body-sidebar[data-title="Frappe CRM"] .header-title::after {
+	content: "CRM Portal";
 	font-size: var(--text-md);
 	font-weight: 500;
 	line-height: 1.2;

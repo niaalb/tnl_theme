@@ -12,6 +12,10 @@
     "branch": "main"
   },
   {
+    "url": "https://github.com/frappe/crm",
+    "branch": "main"
+  },
+  {
     "url": "https://github.com/niaalb/tnl_theme",
     "branch": "main"
   }

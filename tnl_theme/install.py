@@ -18,6 +18,7 @@ def after_install():
 	settings.save(ignore_permissions=True)
 
 	hide_frappe_help_links()
+	retire_legacy_crm_workspace()
 
 
 def hide_frappe_help_links():
@@ -45,3 +46,103 @@ def hide_frappe_help_links():
 			changed = True
 	if changed:
 		navbar_settings.save(ignore_permissions=True)
+
+
+def retire_legacy_crm_workspace():
+	"""Delete ERPNext's built-in CRM workspace and its "CRM" Desktop Icon
+	(the classic module-grid tile on the plain /desk home page — a third,
+	separate navigation surface from the sidebar, with its own doctype
+	and its own stale link), so nothing CRM-like keeps pointing at
+	ERPNext's Lead/Opportunity/Customer system once Frappe CRM is
+	installed. This only removes dashboard/sidebar/tile pages — the
+	underlying doctypes and their data are untouched.
+
+	The Desktop Icon is deleted rather than hidden for the same reason
+	as the workspace below: its `hidden` flag was already set to 1 and
+	made no difference — Workspace Manager–level accounts bypass hidden
+	checks in more than one of these three separate systems, not just
+	the one this was first discovered in.
+
+	Frappe CRM's own workspace is left under its original name ("Frappe
+	CRM"), not renamed to plain "CRM". A plain rename was tried first,
+	but ERPNext's CRM *module* (distinct from its workspace, which this
+	function does remove) is permanently named "CRM" too — and gets
+	rebuilt fresh on every page load via frappe.boot.get_sidebar_items()
+	-> auto_generate_sidebar_from_module(), which groups doctypes by
+	their `module` field from live metadata, not from any stored,
+	deletable record. Campaign, Opportunity, etc. will keep declaring
+	module="CRM" for as long as ERPNext itself is installed, so that
+	fallback sidebar — carrying the exact same "Home" link to a Dashboard
+	named "CRM" that caused /desk/dashboard-view/CRM in the first place —
+	regenerates no matter what Workspace/Workspace Sidebar records get
+	deleted or renamed. "CRM" as an exact name is a permanent collision
+	with that module, not a fixable bug; "Frappe CRM" avoids it entirely.
+
+	Also cleans up after that earlier rename attempt: undoes it if still
+	in place.
+
+	Guarded by exists() checks since a site without Frappe CRM installed
+	shouldn't error, and re-applied on every migrate so it also reaches
+	sites that already existed before this fixup was added."""
+	if frappe.db.exists("Workspace", "CRM"):
+		if frappe.db.get_value("Workspace", "CRM", "module") == "FCRM":
+			frappe.rename_doc("Workspace", "CRM", "Frappe CRM", force=True, show_alert=False)
+			frappe.db.set_value("Workspace", "Frappe CRM", "label", "Frappe CRM")
+			frappe.db.set_value("Workspace", "Frappe CRM", "title", "Frappe CRM")
+			frappe.clear_document_cache("Workspace", "Frappe CRM")
+		else:
+			frappe.delete_doc("Workspace", "CRM", ignore_permissions=True, force=True)
+
+	if frappe.db.exists("Desktop Icon", "CRM"):
+		frappe.delete_doc("Desktop Icon", "CRM", ignore_permissions=True, force=True)
+
+	_rebuild_frappe_crm_sidebar()
+
+	# Public workspaces (for_user is blank) fall into the branch of
+	# Workspace.clear_cache() that clears the shared "bootinfo" cache key
+	# rather than a specific user's — Desk's sidebar is built from
+	# bootinfo, so without this the old values keep appearing at login
+	# even after the DB itself is correct.
+	frappe.cache.delete_key("bootinfo")
+
+
+def _rebuild_frappe_crm_sidebar():
+	"""Give Frappe CRM's workspace its own explicit "Workspace Sidebar",
+	rebuilt fresh on every migrate.
+
+	Without this, Desk falls back to auto-generating one from module
+	membership (frappe.desk.doctype.workspace_sidebar.workspace_sidebar.
+	auto_generate_sidebar_from_module) — but that fallback is keyed by
+	*module* name ("fcrm", lowercased) while the frontend looks the
+	sidebar up by the *workspace's* title ("frappe crm", lowercased,
+	from frappe.ui.sidebar.sidebar_item.js). Those only match when a
+	workspace happens to be named exactly like its own module, which
+	isn't true here (workspace "Frappe CRM", module "FCRM") — so the
+	lookup silently misses and some unrelated sidebar item (observed:
+	ERPNext's own "CRM"-module fallback, landing on /desk/campaign)
+	ends up shown instead.
+
+	Reuses auto_generate_sidebar_from_module()'s own item-building logic
+	(it already produces a correct, unsaved "Workspace Sidebar" doc for
+	the FCRM module) and just fixes the one thing wrong with it: stores
+	it under the workspace's real title instead of the module name, so
+	the frontend's lookup actually finds it.
+
+	Has to re-run every migrate, not just once: this doctype has no
+	on-disk fixture in any app, so migrate's orphan-cleanup deletes
+	whatever's here on every single run regardless of what it's named."""
+	from frappe.desk.doctype.workspace_sidebar.workspace_sidebar import auto_generate_sidebar_from_module
+
+	for sidebar_name in ("CRM", "Frappe CRM"):
+		if frappe.db.exists("Workspace Sidebar", sidebar_name):
+			frappe.delete_doc("Workspace Sidebar", sidebar_name, ignore_permissions=True, force=True)
+
+	if not frappe.db.exists("Workspace", "Frappe CRM"):
+		return
+
+	fcrm_sidebar = next(
+		(s for s in auto_generate_sidebar_from_module() if s.module == "FCRM"), None
+	)
+	if fcrm_sidebar:
+		fcrm_sidebar.title = "Frappe CRM"
+		fcrm_sidebar.insert(ignore_permissions=True)
