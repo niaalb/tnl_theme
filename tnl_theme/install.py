@@ -19,6 +19,7 @@ def after_install():
 
 	hide_frappe_help_links()
 	retire_legacy_crm_workspace()
+	retire_legacy_crm_home_card()
 
 
 def hide_frappe_help_links():
@@ -103,6 +104,57 @@ def retire_legacy_crm_workspace():
 	# rather than a specific user's — Desk's sidebar is built from
 	# bootinfo, so without this the old values keep appearing at login
 	# even after the DB itself is correct.
+	frappe.cache.delete_key("bootinfo")
+
+
+def retire_legacy_crm_home_card():
+	"""Remove the stock "CRM" card ERPNext seeds onto the Home workspace's
+	own "Reports & Masters" section (Lead / Customer Group / Territory on
+	a fresh install) — a fourth, independent place old CRM doctypes were
+	still one click away, on top of the workspace/sidebar/desktop-icon
+	trio retire_legacy_crm_workspace already handles. Home is generic
+	ERPNext furniture, not something either app manages, so this edits it
+	directly rather than via a fixture.
+
+	Removes the "CRM" Card Break row and every Link row that follows it
+	up to the next Card Break, plus the matching {"type": "card", "data":
+	{"card_name": "CRM"}} block in `content` — the two are separate,
+	parallel representations of the same page, and both have to change
+	or the card renders empty instead of disappearing.
+
+	Idempotent — a no-op once the card is gone — and re-applied on every
+	migrate the same way as retire_legacy_crm_workspace."""
+	if not frappe.db.exists("Workspace", "Home"):
+		return
+
+	home = frappe.get_doc("Workspace", "Home")
+
+	start = next(
+		(i for i, row in enumerate(home.links) if row.type == "Card Break" and row.label == "CRM"),
+		None,
+	)
+	if start is None:
+		return
+
+	end = next(
+		(i for i, row in enumerate(home.links) if i > start and row.type == "Card Break"),
+		len(home.links),
+	)
+	del home.links[start:end]
+	for i, row in enumerate(home.links):
+		row.idx = i + 1
+
+	import json
+
+	blocks = json.loads(home.content)
+	blocks = [
+		block
+		for block in blocks
+		if not (block.get("type") == "card" and block.get("data", {}).get("card_name") == "CRM")
+	]
+	home.content = json.dumps(blocks, separators=(",", ":"))
+
+	home.save(ignore_permissions=True)
 	frappe.cache.delete_key("bootinfo")
 
 

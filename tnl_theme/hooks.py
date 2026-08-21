@@ -98,6 +98,7 @@ after_install = "tnl_theme.install.after_install"
 after_migrate = [
 	"tnl_theme.install.hide_frappe_help_links",
 	"tnl_theme.install.retire_legacy_crm_workspace",
+	"tnl_theme.install.retire_legacy_crm_home_card",
 ]
 
 # Uninstallation
