@@ -11,6 +11,7 @@
   "client_account",
   "customer",
   "crm_deal",
+  "crm_lead",
   "column_break_details",
   "source",
   "bid_value",
@@ -92,6 +93,13 @@
    "fieldtype": "Link",
    "label": "Linked CRM Deal",
    "options": "CRM Deal",
+   "permlevel": 4
+  },
+  {
+   "fieldname": "crm_lead",
+   "fieldtype": "Link",
+   "label": "Linked CRM Lead",
+   "options": "CRM Lead",
    "permlevel": 4
   },
   {
@@ -440,7 +448,13 @@
   }
  ],
  "index_web_pages_for_search": 1,
- "links": [],
+ "links": [
+  {
+   "group": "Proposal",
+   "link_doctype": "Proposal",
+   "link_fieldname": "bid"
+  }
+ ],
  "modified": "2026-08-13 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Bid Management",

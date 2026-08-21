@@ -150,13 +150,15 @@ after_migrate = [
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
-# 		"on_trash": "method"
-# 	}
-# }
+# Auto-creates a Bid the moment a Lead is qualified (including via a
+# plain kanban drag, not just the explicit "Convert to Deal" action —
+# see on_lead_status_change's own docstring for why that distinction
+# matters).
+doc_events = {
+	"CRM Lead": {
+		"on_update": "tnl_theme.bid_management.api.on_lead_status_change",
+	},
+}
 
 # Scheduled Tasks
 # ---------------
@@ -341,5 +343,10 @@ fixtures = [
 	},
 	{"dt": "Kanban Board", "filters": [["name", "=", "Bid Pipeline"]]},
 	{"dt": "CRM Form Script", "filters": [["name", "=", "Create Bid from Deal"]]},
+	{"dt": "Letter Head", "filters": [["name", "=", "TNL Standard"]]},
+	# The Proposal Template fixture links to this Print Format, so it must
+	# be exported/imported first — Frappe processes fixtures in list order.
+	{"dt": "Print Format", "filters": [["name", "=", "Proposal Standard"]]},
+	{"dt": "Proposal Template", "filters": [["name", "=", "General"]]},
 ]
 

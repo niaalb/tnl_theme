@@ -1,0 +1,21 @@
+{
+ "align_labels_right": 0,
+ "creation": "2026-08-20 00:00:00.000000",
+ "custom_format": 1,
+ "disabled": 0,
+ "doc_type": "Proposal",
+ "docstatus": 0,
+ "doctype": "Print Format",
+ "html": "{% set template = frappe.get_doc(\"Proposal Template\", doc.proposal_template) %}\n{% macro render_section(key, default_label, content) %}\n  {% set matches = template.sections | selectattr(\"section_key\", \"equalto\", key) | list %}\n  {% set row = matches[0] if matches else none %}\n  {% if row and row.is_included and content %}\n    <div class=\"proposal-section\">\n      <h3>{{ row.section_label or default_label }}</h3>\n      <div>{{ content }}</div>\n    </div>\n  {% endif %}\n{% endmacro %}\n\n<style>\n  .proposal-header { margin-bottom: 24px; }\n  .proposal-header h1 { margin-bottom: 4px; }\n  .proposal-meta { color: #666; font-size: 11px; }\n  .proposal-section { margin-bottom: 20px; }\n  .proposal-section h3 { border-bottom: 1px solid #ccc; padding-bottom: 4px; }\n</style>\n\n{% if letter_head and not no_letterhead -%}\n  <div class=\"letter-head\">{{ letter_head }}</div>\n  <hr>\n{%- endif %}\n\n<div class=\"proposal-header\">\n  <h1>{{ doc.title or doc.name }}</h1>\n  <div class=\"proposal-meta\">\n    {{ doc.bid }} &middot; Version {{ doc.version }} &middot; {{ doc.status }}\n  </div>\n</div>\n\n{{ render_section(\"executive_summary\", \"Executive Summary\", doc.executive_summary) }}\n{{ render_section(\"technical_approach\", \"Technical Approach\", doc.technical_approach) }}\n{{ render_section(\"commercial_terms\", \"Commercial Terms\", doc.commercial_terms) }}\n{{ render_section(\"compliance_statement\", \"Compliance Statement\", doc.compliance_statement) }}\n",
+ "idx": 0,
+ "line_breaks": 0,
+ "modified": "2026-08-20 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Bid Management",
+ "name": "Proposal Standard",
+ "owner": "Administrator",
+ "print_format_builder": 0,
+ "print_format_type": "Jinja",
+ "show_section_headings": 0,
+ "standard": "Yes"
+}

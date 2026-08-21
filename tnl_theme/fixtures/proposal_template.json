@@ -1,0 +1,17 @@
+[
+ {
+  "doctype": "Proposal Template",
+  "name": "General",
+  "template_name": "General",
+  "description": "Default proposal template with all four sections included. Duplicate and adjust for other bid types.",
+  "print_format": "Proposal Standard",
+  "default_letter_head": "TNL Standard",
+  "disabled": 0,
+  "sections": [
+   {"section_key": "executive_summary", "section_label": "Executive Summary", "is_included": 1},
+   {"section_key": "technical_approach", "section_label": "Technical Approach", "is_included": 1},
+   {"section_key": "commercial_terms", "section_label": "Commercial Terms", "is_included": 1},
+   {"section_key": "compliance_statement", "section_label": "Compliance Statement", "is_included": 1}
+  ]
+ }
+]

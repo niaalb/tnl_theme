@@ -1,0 +1,12 @@
+[
+ {
+  "doctype": "Letter Head",
+  "name": "TNL Standard",
+  "letter_head_name": "TNL Standard",
+  "source": "Image",
+  "image": "/assets/tnl_theme/images/logo.png",
+  "align": "Center",
+  "disabled": 0,
+  "is_default": 0
+ }
+]
