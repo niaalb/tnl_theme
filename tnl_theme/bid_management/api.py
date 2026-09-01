@@ -2,6 +2,54 @@ import frappe
 from frappe import _
 
 
+def _get_or_create_bid_for_deal(deal_doc, ignore_permissions=False):
+	"""Find-or-create the Bid for a CRM Deal — the shared core behind both
+	create_bid_from_deal (the permission-checked "Create Bid" button) and
+	on_deal_after_insert (the Convert-to-Deal hook below), so both paths
+	produce identical Bid data instead of two slightly different copies
+	of the same logic.
+
+	Dedupes on crm_deal first, then (if the Deal has a Lead) on crm_lead —
+	covering a Deal created after its Lead was already independently
+	qualified (see create_bid_from_lead) — before ever creating new.
+	"""
+	existing = frappe.db.get_value("Bid", {"crm_deal": deal_doc.name}, "name")
+	if existing:
+		return existing, False
+
+	# If this Deal was converted from a Lead that already has a Bid (most
+	# likely auto-created when that Lead was qualified — see
+	# on_lead_status_change below), attach this Deal to that Bid instead
+	# of creating a second one for the same underlying opportunity.
+	if deal_doc.lead:
+		existing_from_lead = frappe.db.get_value("Bid", {"crm_lead": deal_doc.lead}, "name")
+		if existing_from_lead:
+			frappe.db.set_value("Bid", existing_from_lead, "crm_deal", deal_doc.name)
+			return existing_from_lead, False
+
+	bid = frappe.new_doc("Bid")
+	bid.client_account = deal_doc.organization or deal_doc.lead_name or deal_doc.name
+	bid.crm_deal = deal_doc.name
+	# Back-fill crm_lead too whenever it's known, so a Bid created from a
+	# Deal is just as fully linked as one created from a Lead — needed
+	# for on_deal_after_insert below, where this is often the only place
+	# crm_lead ever gets set.
+	if deal_doc.lead:
+		bid.crm_lead = deal_doc.lead
+	bid.bd_owner = frappe.session.user
+	# CRM Deal's own "source" is a freeform CRM Lead Source Link with no
+	# fixed values, so it can't be mapped onto Bid's fixed Select options
+	# reliably — "Other" is an honest placeholder rather than a guess.
+	bid.source = "Other"
+	if deal_doc.deal_value:
+		bid.bid_value = deal_doc.deal_value
+	if deal_doc.currency:
+		bid.currency = deal_doc.currency
+	bid.insert(ignore_permissions=ignore_permissions)
+
+	return bid.name, True
+
+
 @frappe.whitelist()
 def create_bid_from_deal(deal):
 	"""Create a Bid pre-filled from a CRM Deal.
@@ -14,37 +62,10 @@ def create_bid_from_deal(deal):
 	if not frappe.has_permission("Bid", "create"):
 		frappe.throw(_("You are not permitted to create a Bid."), frappe.PermissionError)
 
-	existing = frappe.db.get_value("Bid", {"crm_deal": deal}, "name")
-	if existing:
-		return {"name": existing, "created": False}
-
 	deal_doc = frappe.get_doc("CRM Deal", deal)
+	name, created = _get_or_create_bid_for_deal(deal_doc)
 
-	# If this Deal was converted from a Lead that already has a Bid (most
-	# likely auto-created when that Lead was qualified — see
-	# on_lead_status_change below), attach this Deal to that Bid instead
-	# of creating a second one for the same underlying opportunity.
-	if deal_doc.lead:
-		existing_from_lead = frappe.db.get_value("Bid", {"crm_lead": deal_doc.lead}, "name")
-		if existing_from_lead:
-			frappe.db.set_value("Bid", existing_from_lead, "crm_deal", deal_doc.name)
-			return {"name": existing_from_lead, "created": False}
-
-	bid = frappe.new_doc("Bid")
-	bid.client_account = deal_doc.organization or deal_doc.lead_name or deal_doc.name
-	bid.crm_deal = deal_doc.name
-	bid.bd_owner = frappe.session.user
-	# CRM Deal's own "source" is a freeform CRM Lead Source Link with no
-	# fixed values, so it can't be mapped onto Bid's fixed Select options
-	# reliably — "Other" is an honest placeholder rather than a guess.
-	bid.source = "Other"
-	if deal_doc.deal_value:
-		bid.bid_value = deal_doc.deal_value
-	if deal_doc.currency:
-		bid.currency = deal_doc.currency
-	bid.insert()
-
-	return {"name": bid.name, "created": True}
+	return {"name": name, "created": created}
 
 
 def create_bid_from_lead(lead):
@@ -95,3 +116,36 @@ def on_lead_status_change(doc, method=None):
 		create_bid_from_lead(doc.name)
 	except Exception:
 		frappe.log_error(title="Auto Bid creation from Lead failed")
+
+
+def on_deal_after_insert(doc, method=None):
+	"""doc_events hook: CRM Deal after_insert.
+
+	Covers "Convert to Deal", which crm_lead.py's convert_to_deal()
+	advances the Lead's status via db_set() — a direct column write that
+	bypasses on_update, so on_lead_status_change (registered on CRM
+	Lead's on_update, above) never fires for it. Left alone, a Lead
+	converted this way — the standard, most discoverable way to convert
+	a Lead in the CRM UI — produces a Deal with no Bid unless someone
+	separately remembers to click "Create Bid" by hand.
+
+	Hooking the Deal's own after_insert instead sidesteps the broken
+	event rather than trying to fix it: create_deal() (crm_lead.py)
+	builds the new CRM Deal with a normal `frappe.new_doc(...).insert()`,
+	which fires this hook like any other document creation, regardless
+	of how the Lead's own status got there.
+
+	Only acts when the Deal has a Lead behind it — a Deal created fresh,
+	with no Lead, is the existing "fresh prospect" case the manual
+	"Create Bid" button already covers by design; auto-creating for
+	those too would be a scope change nothing here asked for.
+
+	Wrapped so a failure here can never block the Deal's own creation —
+	same defensive stance as on_lead_status_change above.
+	"""
+	if not doc.lead:
+		return
+	try:
+		_get_or_create_bid_for_deal(doc, ignore_permissions=True)
+	except Exception:
+		frappe.log_error(title="Auto Bid creation from Deal (after_insert) failed")

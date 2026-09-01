@@ -152,12 +152,17 @@ after_migrate = [
 # Hook on document methods and events
 
 # Auto-creates a Bid the moment a Lead is qualified (including via a
-# plain kanban drag, not just the explicit "Convert to Deal" action —
-# see on_lead_status_change's own docstring for why that distinction
-# matters).
+# plain kanban drag), and also the moment a Deal is created from
+# "Convert to Deal" — two separate hooks because that action changes
+# the Lead's status via db_set(), which bypasses on_update, so the
+# Deal's own after_insert is what actually catches that path. See each
+# function's docstring in bid_management/api.py for the full reasoning.
 doc_events = {
 	"CRM Lead": {
 		"on_update": "tnl_theme.bid_management.api.on_lead_status_change",
+	},
+	"CRM Deal": {
+		"after_insert": "tnl_theme.bid_management.api.on_deal_after_insert",
 	},
 }
 
