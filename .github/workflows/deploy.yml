@@ -117,6 +117,30 @@ jobs:
             done
           done
 
+      - name: Run site migrations unconditionally
+        # The migrator container (compose.migrator.yaml) only runs bench
+        # migrate when MIGRATE_SITES=true in custom.env — a reasonable
+        # production safety default, but it means tnl_theme's own
+        # after_migrate fixups (hide_frappe_help_links,
+        # retire_legacy_crm_workspace, retire_legacy_crm_home_card — see
+        # install.py) silently never ran if that's set to false or unset
+        # here, regardless of whether that flag's intent was "skip
+        # migrations" specifically or just never got set at all. Calling
+        # migrate directly here every deploy, independent of that flag,
+        # is what actually guarantees those fixups run. bench migrate
+        # itself is idempotent (a no-op for anything already migrated),
+        # so double-running it alongside the conditional migrator is safe.
+        run: |
+          cd /opt/frappe/frappe_docker
+          for attempt in 1 2 3; do
+            if docker compose -p frappe_docker -f compose.custom.yaml exec -T backend \
+              bench --site operiqsa.com migrate; then
+              break
+            fi
+            echo "migrate failed (attempt $attempt/3), retrying in 15s..."
+            sleep 15
+          done
+
       - name: Clean up old images
         # Every deploy pulls a fresh multi-hundred-MB image; without this the
         # server's disk fills up within a handful of deploys (hit this
