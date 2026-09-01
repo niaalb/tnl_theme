@@ -96,16 +96,21 @@ def retire_legacy_crm_workspace():
 
 	if frappe.db.exists("Desktop Icon", "CRM"):
 		frappe.delete_doc("Desktop Icon", "CRM", ignore_permissions=True, force=True)
-		# Desktop Icon.on_trash() only clears clear_desktop_icons_cache()
-		# for frappe.session.user — whoever's session is running this
-		# delete (Administrator, during migrate) — not for every user who
-		# already had their own icons cached. Each real user keeps their
-		# own stale "desktop_icons" hash entry forever otherwise, showing
-		# the deleted tile until it happens to expire on its own. Standard
-		# icons are meant to invalidate for everyone at once — see
-		# Desktop Icon.on_update()'s own `if self.standard` branch, which
-		# clears this same full key rather than one user's entry.
-		frappe.cache.delete_key("desktop_icons")
+
+	# Deliberately outside the exists() check above, unlike the delete
+	# call itself: Desktop Icon.on_trash() only clears
+	# clear_desktop_icons_cache() for frappe.session.user — whoever's
+	# session is running the delete (Administrator, during migrate) —
+	# not for every user who already had their own icons cached, so each
+	# real user keeps their own stale "desktop_icons" hash entry
+	# regardless of whether this specific run is the one that deleted
+	# the record. Standard icons are meant to invalidate for everyone at
+	# once — see Desktop Icon.on_update()'s own `if self.standard`
+	# branch, which clears this same full key rather than one user's
+	# entry — so this has to run every time this function runs, the same
+	# way the bootinfo clear below already does, not just the one run
+	# where the record happened to still exist to delete.
+	frappe.cache.delete_key("desktop_icons")
 
 	_rebuild_frappe_crm_sidebar()
 
