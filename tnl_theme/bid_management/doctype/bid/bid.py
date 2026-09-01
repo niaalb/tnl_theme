@@ -26,6 +26,8 @@ WORKSTREAM_OWNER_FIELD = {
 	"administrative_next_checkpoint_date": "administrative_lead",
 }
 
+WORKSTREAMS = ["Technical", "Financial", "Administrative"]
+
 
 class Bid(Document):
 	def validate(self):
@@ -36,6 +38,7 @@ class Bid(Document):
 
 	def on_update(self):
 		self._notify_on_stage_change()
+		self._create_workstream_outputs_on_kickoff()
 
 	def _enforce_workstream_ownership(self):
 		user = frappe.session.user
@@ -134,6 +137,37 @@ class Bid(Document):
 					self.name, self.client_account, self.outcome
 				),
 			)
+
+	def _create_workstream_outputs_on_kickoff(self):
+		"""Stub out a Bid Workstream Output row per workstream the moment
+		Kickoff confirms — that transition already requires all three
+		leads and a submission_deadline to be set, so it's the first point
+		a Bid is guaranteed ready for them. Idempotent per workstream (a
+		Lead can also self-serve create their own row via that doctype's
+		own permissions, so this only fills in what's missing rather than
+		assuming it's always starting from zero). Wrapped so a failure here
+		can never block the Kickoff transition itself — same defensive
+		stance as _notify_on_stage_change and the CRM-side hooks in
+		api.py."""
+		before = self.get_doc_before_save()
+		if not before or before.stage == self.stage or self.stage != "In Progress":
+			return
+
+		for workstream in WORKSTREAMS:
+			if frappe.db.exists("Bid Workstream Output", {"bid": self.name, "workstream": workstream}):
+				continue
+			try:
+				frappe.get_doc(
+					{
+						"doctype": "Bid Workstream Output",
+						"bid": self.name,
+						"workstream": workstream,
+					}
+				).insert(ignore_permissions=True)
+			except Exception:
+				frappe.log_error(
+					title=f"Bid Workstream Output auto-creation failed: {self.name} ({workstream})"
+				)
 
 	def _assign_todo(self, users, description):
 		from frappe.desk.form.assign_to import add as assign_to_add

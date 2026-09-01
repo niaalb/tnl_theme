@@ -453,6 +453,11 @@
    "group": "Proposal",
    "link_doctype": "Proposal",
    "link_fieldname": "bid"
+  },
+  {
+   "group": "Workstream Output",
+   "link_doctype": "Bid Workstream Output",
+   "link_fieldname": "bid"
   }
  ],
  "modified": "2026-08-13 10:00:00.000000",

@@ -2,11 +2,12 @@
 # For license information, please see license.txt
 
 import frappe
+from crm.fcrm.doctype.crm_lead.crm_lead import convert_to_deal
 from frappe.model.workflow import apply_workflow
 from frappe.tests import IntegrationTestCase
 from frappe.utils import add_days, today
 
-from tnl_theme.bid_management import tasks
+from tnl_theme.bid_management import api, tasks
 from tnl_theme.bid_management.utils import add_business_days
 
 # Bid's `customer`/`crm_deal` Link fields are optional and never
@@ -50,6 +51,16 @@ class TestBid(IntegrationTestCase):
 				user.append("roles", {"role": role})
 				user.insert(ignore_permissions=True)
 
+		# convert_to_deal() itself only conditionally db_sets status to
+		# "Qualified" if this status record exists (see crm_lead.py) — a
+		# throwaway/CI site may not have either of these statuses seeded,
+		# so create them rather than assume.
+		for lead_status in ("New", "Qualified"):
+			if not frappe.db.exists("CRM Lead Status", lead_status):
+				frappe.get_doc(
+					{"doctype": "CRM Lead Status", "name": lead_status, "lead_status": lead_status}
+				).insert(ignore_permissions=True)
+
 	def tearDown(self):
 		frappe.set_user("Administrator")
 
@@ -60,6 +71,19 @@ class TestBid(IntegrationTestCase):
 				"client_account": "Test Client",
 				"source": "RFP",
 				"bd_owner": "bd@bidtest.com",
+				**kwargs,
+			}
+		)
+		doc.insert(ignore_permissions=True)
+		return doc
+
+	def make_lead(self, **kwargs):
+		doc = frappe.get_doc(
+			{
+				"doctype": "CRM Lead",
+				"first_name": "Test",
+				"last_name": "Lead",
+				"status": "New",
 				**kwargs,
 			}
 		)
@@ -203,3 +227,122 @@ class TestBid(IntegrationTestCase):
 
 		tasks.check_bid_escalations()
 		self.assertEqual(len(sent), 1, "must not send a duplicate escalation on re-run")
+
+	def _bid_ready_for_kickoff(self):
+		"""Drives a fresh Bid through Hand Off -> Acknowledge -> Mark as Go
+		— the setup portion of test_full_workflow_walkthrough, stopping
+		just short of confirming Kickoff itself, so callers can test that
+		one transition's side effects in isolation."""
+		frappe.set_user("bd@bidtest.com")
+		bid = self.make_bid()
+
+		d = frappe.get_doc("Bid", bid.name)
+		d.sales_owner = "sales@bidtest.com"
+		d.save()
+		apply_workflow(frappe.get_doc("Bid", bid.name), "Hand Off to Sales")
+
+		frappe.set_user("sales@bidtest.com")
+		apply_workflow(frappe.get_doc("Bid", bid.name), "Acknowledge Receipt")
+
+		d = frappe.get_doc("Bid", bid.name)
+		d.bid_no_bid_decision = "Bid"
+		d.qualification_reasoning = "Good fit"
+		d.save()
+		apply_workflow(frappe.get_doc("Bid", bid.name), "Mark as Go")
+
+		return bid.name
+
+	def _confirm_kickoff(self, bid_name):
+		frappe.set_user("bidmgr@bidtest.com")
+		d = frappe.get_doc("Bid", bid_name)
+		d.technical_lead = "tech@bidtest.com"
+		d.financial_lead = "fin@bidtest.com"
+		d.administrative_lead = "admin@bidtest.com"
+		d.submission_deadline = add_days(today(), 10)
+		d.save()
+		apply_workflow(frappe.get_doc("Bid", bid_name), "Confirm Kickoff & Assign Leads")
+
+	def test_kickoff_transition_auto_creates_workstream_outputs(self):
+		bid_name = self._bid_ready_for_kickoff()
+		self._confirm_kickoff(bid_name)
+
+		outputs = frappe.get_all(
+			"Bid Workstream Output", filters={"bid": bid_name}, fields=["workstream", "ready_for_proposal"]
+		)
+		self.assertEqual(len(outputs), 3)
+		self.assertEqual({o.workstream for o in outputs}, {"Technical", "Financial", "Administrative"})
+		self.assertTrue(all(o.ready_for_proposal == 0 for o in outputs))
+
+	def test_kickoff_transition_is_idempotent_for_outputs(self):
+		bid_name = self._bid_ready_for_kickoff()
+		self._confirm_kickoff(bid_name)
+
+		# Save again while already In Progress — stage unchanged, so the
+		# hook should no-op rather than raising on the duplicate-row check.
+		d = frappe.get_doc("Bid", bid_name)
+		d.next_action = "Follow up with Technical Lead"
+		d.save()
+
+		self.assertEqual(frappe.db.count("Bid Workstream Output", {"bid": bid_name}), 3)
+
+	def test_kanban_qualify_creates_a_bid(self):
+		"""Acceptance scenario 1: Lead -> Qualified via a normal save (what
+		a kanban drag does) must still auto-create a linked Bid — the
+		on_deal_after_insert hook added for scenario 2 must not have
+		disturbed this existing path."""
+		lead = self.make_lead(first_name="Kanban")
+		lead.status = "Qualified"
+		lead.save(ignore_permissions=True)
+
+		bid_name = frappe.db.get_value("Bid", {"crm_lead": lead.name}, "name")
+		self.assertIsNotNone(bid_name, "qualifying a Lead should auto-create a Bid")
+		bid = frappe.get_doc("Bid", bid_name)
+		self.assertEqual(bid.crm_lead, lead.name)
+		self.assertIsNone(bid.crm_deal)  # no Deal exists yet at this point
+
+	def test_convert_to_deal_creates_a_bid(self):
+		"""Acceptance scenario 2: the standard "Convert to Deal" button
+		path. convert_to_deal() advances the Lead's status via db_set(),
+		which bypasses on_update — this is the exact path the fix targets."""
+		lead = self.make_lead(first_name="Convert")
+
+		deal_name = convert_to_deal(lead=lead.name, doc=lead)
+
+		bid_name = frappe.db.get_value("Bid", {"crm_deal": deal_name}, "name")
+		self.assertIsNotNone(bid_name, "converting a Lead to a Deal should auto-create a linked Bid")
+		bid = frappe.get_doc("Bid", bid_name)
+		self.assertEqual(bid.crm_deal, deal_name)
+		self.assertEqual(bid.crm_lead, lead.name, "the Bid should carry the originating Lead too")
+
+	def test_convert_to_deal_after_kanban_qualify_reuses_same_bid(self):
+		"""Acceptance scenario 3 (first form): a Lead qualified via kanban
+		(creating a Bid via crm_lead) that is later also converted to a
+		Deal must link that SAME Bid, not create a second one."""
+		lead = self.make_lead(first_name="BothPaths")
+		lead.status = "Qualified"
+		lead.save(ignore_permissions=True)
+		bid_from_kanban = frappe.db.get_value("Bid", {"crm_lead": lead.name}, "name")
+		self.assertIsNotNone(bid_from_kanban)
+
+		lead.reload()
+		deal_name = convert_to_deal(lead=lead.name, doc=lead)
+
+		bids_for_lead = frappe.get_all("Bid", filters={"crm_lead": lead.name})
+		self.assertEqual(len(bids_for_lead), 1, "must not create a second Bid for the same Lead")
+		self.assertEqual(bids_for_lead[0].name, bid_from_kanban)
+		self.assertEqual(frappe.db.get_value("Bid", bid_from_kanban, "crm_deal"), deal_name)
+
+	def test_create_bid_from_deal_button_stays_idempotent_after_hook(self):
+		"""Acceptance scenarios 3 (second form) and 4: after on_deal_after_insert
+		has already auto-created a Bid for a converted Deal, the pre-existing
+		manual "Create Bid" button (create_bid_from_deal) must still work
+		exactly as before — finding the existing Bid, not duplicating it."""
+		lead = self.make_lead(first_name="ManualButton")
+		deal_name = convert_to_deal(lead=lead.name, doc=lead)
+
+		frappe.set_user("bd@bidtest.com")
+		result = api.create_bid_from_deal(deal_name)
+		self.assertFalse(result["created"], "the hook already created one; the button must reuse it")
+
+		bids_for_deal = frappe.get_all("Bid", filters={"crm_deal": deal_name})
+		self.assertEqual(len(bids_for_deal), 1, "only one Bid should exist for this Deal")

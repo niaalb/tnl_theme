@@ -1,0 +1,161 @@
+{
+ "actions": [],
+ "autoname": "BWO-.YYYY.-.#####",
+ "creation": "2026-08-28 00:00:00.000000",
+ "doctype": "DocType",
+ "document_type": "Document",
+ "engine": "InnoDB",
+ "field_order": [
+  "tab_overview",
+  "bid",
+  "workstream",
+  "column_break_overview",
+  "ready_for_proposal",
+  "ready_on",
+  "tab_content",
+  "content"
+ ],
+ "fields": [
+  {
+   "fieldname": "tab_overview",
+   "fieldtype": "Tab Break",
+   "label": "Overview"
+  },
+  {
+   "fieldname": "bid",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Bid",
+   "options": "Bid",
+   "reqd": 1
+  },
+  {
+   "fieldname": "workstream",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Workstream",
+   "options": "Technical\nFinancial\nAdministrative",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_overview",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "ready_for_proposal",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Ready for Proposal"
+  },
+  {
+   "description": "Set automatically when Ready for Proposal is checked, and cleared if it's unchecked again for rework.",
+   "fieldname": "ready_on",
+   "fieldtype": "Datetime",
+   "label": "Marked Ready On",
+   "read_only": 1
+  },
+  {
+   "fieldname": "tab_content",
+   "fieldtype": "Tab Break",
+   "label": "Output"
+  },
+  {
+   "description": "The Lead's write-up for this workstream — source material for the Bid Manager to draw on when building the Proposal. Attach supporting documents using the sidebar.",
+   "fieldname": "content",
+   "fieldtype": "Text Editor",
+   "label": "Workstream Output"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "module": "Bid Management",
+ "name": "Bid Workstream Output",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Business Development"
+  },
+  {
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales"
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Bid Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Technical Lead",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Financial Lead",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Administrative Lead",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Leadership"
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "import": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}
