@@ -13,6 +13,8 @@ jobs:
     permissions:
       contents: read
       packages: write
+    outputs:
+      app_names: ${{ steps.app_names.outputs.list }}
     steps:
       - name: Checkout tnl_theme
         uses: actions/checkout@v4
@@ -22,6 +24,24 @@ jobs:
         with:
           repository: frappe/frappe_docker
           path: frappe_docker
+
+      # deploy/apps.json controls what's *built into the image* — it was
+      # already being read for that below. It does NOT install a newly
+      # added app onto the actual production site; bench migrate (in
+      # compose.migrator.yaml) only syncs apps a site already has
+      # installed. This derives the site-install-app names from the same
+      # file so the deploy job can also install anything new, instead of
+      # that being a manual step every time an app is added here.
+      - name: Derive installable app names from deploy/apps.json
+        id: app_names
+        run: |
+          names=$(python3 -c "
+          import json
+          apps = json.load(open('deploy/apps.json'))
+          names = [a['url'].rstrip('/').split('/')[-1].removesuffix('.git') for a in apps]
+          print(' '.join(names))
+          ")
+          echo "list=$names" >> "$GITHUB_OUTPUT"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -76,6 +96,26 @@ jobs:
           # same bind-mounted database files.
           docker compose -p frappe_docker -f compose.custom.yaml pull
           docker compose -p frappe_docker -f compose.custom.yaml up -d
+
+      - name: Install any newly-added apps on the site
+        # bench install-app is idempotent — an app already installed is
+        # skipped with a warning, not an error — so this is safe to run
+        # on every deploy, not just when an app is actually new. Retries
+        # guard against the migrator container (started by the same
+        # `up -d` above) still holding a DB lock from `bench migrate`
+        # when this step starts.
+        run: |
+          cd /opt/frappe/frappe_docker
+          for app in ${{ needs.build-and-push.outputs.app_names }}; do
+            for attempt in 1 2 3 4 5; do
+              if docker compose -p frappe_docker -f compose.custom.yaml exec -T backend \
+                bench --site operiqsa.com install-app "$app"; then
+                break
+              fi
+              echo "install-app $app failed (attempt $attempt/5), retrying in 15s..."
+              sleep 15
+            done
+          done
 
       - name: Clean up old images
         # Every deploy pulls a fresh multi-hundred-MB image; without this the
