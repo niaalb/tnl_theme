@@ -7,6 +7,8 @@
   "image": "/assets/tnl_theme/images/logo.png",
   "align": "Center",
   "disabled": 0,
-  "is_default": 0
+  "is_default": 1,
+  "footer_source": "HTML",
+  "footer": "<div style=\"text-align:center;\">TNL &middot; operiqsa.com &middot; Confidential</div>"
  }
 ]

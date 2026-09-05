@@ -352,7 +352,7 @@ fixtures = [
 	{"dt": "Letter Head", "filters": [["name", "=", "TNL Standard"]]},
 	# The Proposal Template fixture links to this Print Format, so it must
 	# be exported/imported first — Frappe processes fixtures in list order.
-	{"dt": "Print Format", "filters": [["name", "=", "Proposal Standard"]]},
+	{"dt": "Print Format", "filters": [["name", "in", ["Proposal Standard", "Workstream Output Internal"]]]},
 	{"dt": "Proposal Template", "filters": [["name", "=", "General"]]},
 ]
 

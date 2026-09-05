@@ -2,6 +2,7 @@
  "actions": [],
  "autoname": "BWO-.YYYY.-.#####",
  "creation": "2026-08-28 00:00:00.000000",
+ "default_print_format": "Workstream Output Internal",
  "doctype": "DocType",
  "document_type": "Document",
  "engine": "InnoDB",

@@ -1,0 +1,23 @@
+{
+ "align_labels_right": 0,
+ "creation": "2026-09-02 00:00:00.000000",
+ "css": ".wo-header h2 {\n  font-size: 16px;\n  margin: 0 0 10px;\n  color: #241c22;\n}\n.wo-meta {\n  font-size: 10.5px;\n  color: #423d52;\n  display: flex;\n  flex-wrap: wrap;\n  gap: 4px 20px;\n  margin-bottom: 4px;\n}\n.wo-meta-label {\n  color: #6b6478;\n}\n.wo-rule {\n  border: none;\n  border-top: 1px solid #e4ddef;\n  margin: 10px 0 16px;\n}\n.wo-content {\n  font-size: 12px;\n  line-height: 1.6;\n}\n",
+ "custom_format": 1,
+ "disabled": 0,
+ "doc_type": "Bid Workstream Output",
+ "docstatus": 0,
+ "doctype": "Print Format",
+ "html": "{% set bid = frappe.db.get_value(\"Bid\", doc.bid, [\"client_account\", \"technical_lead\", \"financial_lead\", \"administrative_lead\", \"technical_status\", \"financial_status\", \"administrative_status\"], as_dict=True) %}\n{% set lead_field = {\"Technical\": \"technical_lead\", \"Financial\": \"financial_lead\", \"Administrative\": \"administrative_lead\"}[doc.workstream] %}\n{% set status_field = {\"Technical\": \"technical_status\", \"Financial\": \"financial_status\", \"Administrative\": \"administrative_status\"}[doc.workstream] %}\n{% set lead_user = bid[lead_field] if bid else none %}\n\n<div class=\"wo-header\">\n  <h2>{{ doc.workstream }} &mdash; {{ (bid.client_account if bid else none) or doc.bid }}</h2>\n</div>\n\n<div class=\"wo-meta\">\n  <div><span class=\"wo-meta-label\">Bid:</span> {{ (bid.client_account if bid else none) or doc.bid }}</div>\n  <div><span class=\"wo-meta-label\">Lead:</span> {{ frappe.get_fullname(lead_user) if lead_user else \"Not yet assigned\" }}</div>\n  <div><span class=\"wo-meta-label\">Workstream Status:</span> {{ (bid[status_field] if bid else none) or \"Not Started\" }}</div>\n  <div><span class=\"wo-meta-label\">Ready for Proposal:</span> {{ \"Yes\" if doc.ready_for_proposal else \"No\" }}{% if doc.ready_on %} ({{ doc.ready_on }}){% endif %}</div>\n</div>\n<hr class=\"wo-rule\">\n\n<div class=\"wo-content\">\n  {{ doc.content or \"<p><em>No content yet.</em></p>\" }}\n</div>\n",
+ "idx": 0,
+ "line_breaks": 0,
+ "modified": "2026-09-02 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Bid Management",
+ "name": "Workstream Output Internal",
+ "owner": "Administrator",
+ "page_number": "Hide",
+ "print_format_builder": 0,
+ "print_format_type": "Jinja",
+ "show_section_headings": 0,
+ "standard": "Yes"
+}
