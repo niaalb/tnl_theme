@@ -10,8 +10,11 @@ app_license = "mit"
 
 # Bid Management's CRM integration (create_bid_from_deal, the "Create Bid"
 # Form Script button on CRM Deal, and Bid.crm_deal) all depend on the CRM
-# Deal doctype existing, so this app cannot install without it.
-required_apps = ["crm"]
+# Deal doctype existing, so this app cannot install without it. Proposal
+# e-signature's page rasterization (tnl_theme.bid_management.signature_placement)
+# depends on pdfplumber, which is only guaranteed present via ERPNext's own
+# pyproject.toml — declared here so that's not a silently implicit dependency.
+required_apps = ["crm", "erpnext"]
 
 # Each item in the list will be shown as an app in the apps page
 # add_to_apps_screen = [

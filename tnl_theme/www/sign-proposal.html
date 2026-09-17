@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>{% if doc %}{{ doc.title or doc.name }} — {% endif %}Sign Proposal</title>
+	<meta name="generator" content="frappe">
+	<style>
+		:root {
+			--tnl-50: #ead9e4;
+			--tnl-200: #d7bacd;
+			--tnl-600: #724b68;
+			--tnl-800: #4d3146;
+			--tnl-950: #241c22;
+		}
+		* { box-sizing: border-box; }
+		body {
+			margin: 0;
+			background: #f7f3f5;
+			color: var(--tnl-950);
+			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+		}
+		.page-wrap {
+			max-width: 860px;
+			margin: 0 auto;
+			padding: 24px 16px 64px;
+		}
+		.brand-bar {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			padding: 4px 0 20px;
+			border-bottom: 3px solid var(--tnl-600);
+			margin-bottom: 24px;
+		}
+		.brand-bar .brand-mark {
+			font-weight: 700;
+			letter-spacing: 0.02em;
+			color: var(--tnl-600);
+			font-size: 15px;
+		}
+		.card {
+			background: #fff;
+			border: 1px solid var(--tnl-200);
+			border-radius: 10px;
+			padding: 28px 32px;
+			box-shadow: 0 1px 3px rgba(36, 28, 34, 0.06);
+		}
+		.status-banner {
+			border-radius: 8px;
+			padding: 12px 16px;
+			margin-bottom: 20px;
+			font-size: 14px;
+		}
+		.status-banner.signed { background: #e5f3ea; color: #205b34; border: 1px solid #bfe3cb; }
+		.status-banner.declined { background: #fbe9ec; color: #7a2233; border: 1px solid #f0c3cd; }
+		.pages-stack {
+			display: flex;
+			flex-direction: column;
+			gap: 16px;
+			margin-bottom: 8px;
+		}
+		.sig-page {
+			position: relative;
+			width: 100%;
+			border: 1px solid var(--tnl-200);
+			border-radius: 6px;
+			overflow: hidden;
+			background: #fff;
+		}
+		.sig-page img {
+			display: block;
+			width: 100%;
+			height: auto;
+		}
+		.sig-field-box {
+			position: absolute;
+		}
+		.sig-field-box .signature-placeholder {
+			width: 100%;
+			height: 100%;
+			border: 1px dashed #b9a1b0;
+			border-radius: 4px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 10.5px;
+			color: #9c8a97;
+			text-transform: uppercase;
+			letter-spacing: 0.03em;
+			box-sizing: border-box;
+		}
+		.sig-field-box.field-signature {
+			border: 1.5px solid var(--tnl-600);
+			border-radius: 4px;
+			background: rgba(255, 255, 255, 0.9);
+		}
+		.sig-field-box .signature-value {
+			font-size: 12.5px;
+			color: #241c22;
+			background: rgba(255, 255, 255, 0.9);
+			padding: 2px 4px;
+			display: inline-block;
+		}
+		.sig-field-box .signature-caption {
+			font-size: 9px;
+			color: #6b6478;
+			background: rgba(255, 255, 255, 0.9);
+			padding: 0 4px;
+		}
+		.signature-panel {
+			margin-top: 24px;
+			padding-top: 20px;
+			border-top: 1px solid var(--tnl-200);
+		}
+		.signature-panel h2 {
+			font-size: 16px;
+			margin: 0 0 12px;
+			color: var(--tnl-950);
+		}
+		.field-row {
+			display: flex;
+			gap: 12px;
+			margin-bottom: 12px;
+			flex-wrap: wrap;
+		}
+		.field-row label {
+			display: block;
+			font-size: 12px;
+			color: #6b6478;
+			margin-bottom: 4px;
+		}
+		.field-row .field {
+			flex: 1;
+			min-width: 220px;
+		}
+		.field-row input {
+			width: 100%;
+			padding: 8px 10px;
+			border: 1px solid var(--tnl-200);
+			border-radius: 6px;
+			font-size: 14px;
+		}
+		.actions {
+			display: flex;
+			gap: 10px;
+			margin-top: 16px;
+			flex-wrap: wrap;
+		}
+		.btn {
+			padding: 9px 20px;
+			border-radius: 6px;
+			font-size: 14px;
+			cursor: pointer;
+			border: 1px solid transparent;
+		}
+		.btn-primary {
+			background: var(--tnl-600);
+			color: #fff;
+		}
+		.btn-primary:disabled { opacity: 0.6; cursor: default; }
+		.btn-secondary {
+			background: #fff;
+			color: var(--tnl-800);
+			border-color: var(--tnl-200);
+		}
+		.form-error {
+			display: none;
+			color: #a83e38;
+			font-size: 13px;
+			margin-top: 10px;
+		}
+		.invalid-card { text-align: center; padding: 48px 24px; }
+		.invalid-card p { color: #6b6478; }
+	</style>
+</head>
+<body>
+	<div class="page-wrap">
+		<div class="brand-bar">
+			<span class="brand-mark">TNL</span>
+		</div>
+
+		{% if invalid_link %}
+		<div class="card invalid-card">
+			<h1>{{ _("This link is no longer valid") }}</h1>
+			<p>{{ _("It may have expired, or the proposal it points to no longer exists. Please contact TNL for a new link.") }}</p>
+		</div>
+		{% else %}
+		<div class="card">
+			{% if already_decided %}
+				{% if doc.signature_status == "Signed" %}
+				<div class="status-banner signed">
+					{{ _("Signed on {0} by {1}.").format(frappe.utils.format_datetime(doc.signed_on, "d MMM yyyy, HH:mm") if doc.signed_on else "", doc.signed_by_name or "") }}
+				</div>
+				{% else %}
+				<div class="status-banner declined">
+					{{ _("This proposal was declined.") }}
+				</div>
+				{% endif %}
+			{% endif %}
+
+			<div class="pages-stack" id="pages-stack">
+				{% for page in pages %}
+				<div class="sig-page" data-page="{{ page.page_number }}" data-width-pt="{{ page.width }}" data-height-pt="{{ page.height }}" style="aspect-ratio:{{ page.width }}/{{ page.height }};">
+					<img src="{{ page.image }}" alt="{{ _('Page {0}').format(page.page_number) }}">
+				</div>
+				{% endfor %}
+			</div>
+
+			{% if not already_decided %}
+			<div class="signature-panel">
+				<h2>{{ _("Review and sign") }}</h2>
+				<div class="field-row">
+					<div class="field">
+						<label for="signer-name">{{ _("Your Name") }}</label>
+						<input type="text" id="signer-name" autocomplete="name">
+					</div>
+					<div class="field">
+						<label for="signer-email">{{ _("Your Email") }}</label>
+						<input type="email" id="signer-email" autocomplete="email">
+					</div>
+				</div>
+				<p class="text-muted" style="font-size:12.5px; color:#6b6478;">
+					{{ _("Scroll up to find the signature box on the document above, and draw your signature in it, then confirm below.") }}
+				</p>
+				<div class="actions">
+					<button type="button" class="btn btn-primary" id="sign-btn">{{ _("Sign") }}</button>
+					<button type="button" class="btn btn-secondary" id="decline-btn">{{ _("Decline") }}</button>
+				</div>
+				<div class="form-error" id="form-error"></div>
+			</div>
+			{% endif %}
+		</div>
+		{% endif %}
+	</div>
+
+	{% if not invalid_link and not already_decided %}
+	<script src="/assets/frappe/js/lib/jquery/jquery.min.js"></script>
+	<script src="/assets/frappe/js/lib/jSignature.min.js"></script>
+	<script id="signature-layout-data" type="application/json">{{ signature_layout_json }}</script>
+	<script>
+		(function () {
+			var PROPOSAL_NAME = "{{ proposal_name }}";
+			var SIGNING_KEY = "{{ key }}";
+			var LAYOUT = JSON.parse(document.getElementById("signature-layout-data").textContent || "[]");
+
+			document.addEventListener("DOMContentLoaded", function () {
+				var nameInput = document.getElementById("signer-name");
+				var emailInput = document.getElementById("signer-email");
+				var signBtn = document.getElementById("sign-btn");
+				var declineBtn = document.getElementById("decline-btn");
+				var errorEl = document.getElementById("form-error");
+
+				var $pad = null;
+				var hasDrawn = false;
+				var dateBox = null;
+				var nameBox = null;
+
+				// Position each field box as a percentage of its own page's
+				// container — computed straight from stored points, no
+				// getBoundingClientRect() needed, since the container's
+				// aspect-ratio is already correct before the page image even
+				// finishes loading.
+				LAYOUT.forEach(function (row) {
+					var pageDiv = document.querySelector('.sig-page[data-page="' + row.page_number + '"]');
+					if (!pageDiv) return;
+
+					var box = document.createElement("div");
+					box.className = "sig-field-box";
+					// Percentages computed against the PAGE's own width/height
+					// (in points, from the server) — not read back from CSS,
+					// which would depend on the browser echoing the
+					// aspect-ratio inline style verbatim.
+					var pageWidthPt = parseFloat(pageDiv.dataset.widthPt);
+					var pageHeightPt = parseFloat(pageDiv.dataset.heightPt);
+					box.style.left = (row.x / pageWidthPt * 100) + "%";
+					box.style.top = (row.y / pageHeightPt * 100) + "%";
+					box.style.width = (row.width / pageWidthPt * 100) + "%";
+					box.style.height = (row.height / pageHeightPt * 100) + "%";
+
+					if (row.field_type === "Signature") {
+						box.classList.add("field-signature");
+						var padDiv = document.createElement("div");
+						padDiv.style.width = "100%";
+						padDiv.style.height = "100%";
+						box.appendChild(padDiv);
+						pageDiv.appendChild(box);
+						$pad = $(padDiv).jSignature({
+							width: box.clientWidth,
+							height: box.clientHeight,
+							color: "#241c22",
+						});
+						$(padDiv).on("change", function () {
+							hasDrawn = true;
+						});
+					} else if (row.field_type === "Date") {
+						box.innerHTML = '<div class="signature-placeholder">' + "{{ _('Date') }}" + "</div>";
+						pageDiv.appendChild(box);
+						dateBox = box;
+					} else if (row.field_type === "Signed By Name") {
+						box.innerHTML = '<div class="signature-placeholder">' + "{{ _('Signed By Name') }}" + "</div>";
+						pageDiv.appendChild(box);
+						nameBox = box;
+					}
+				});
+
+				if (dateBox) {
+					var today = new Date().toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+					dateBox.innerHTML = '<span class="signature-value">' + today + "</span>";
+				}
+
+				function escape_html(s) {
+					var d = document.createElement("div");
+					d.innerText = s;
+					return d.innerHTML;
+				}
+
+				function update_name_preview() {
+					if (!nameBox) return;
+					var val = (nameInput.value || "").trim();
+					nameBox.innerHTML = val
+						? '<span class="signature-value">' + escape_html(val) + "</span>"
+						: '<div class="signature-placeholder">' + "{{ _('Signed By Name') }}" + "</div>";
+				}
+				if (nameInput) nameInput.addEventListener("input", update_name_preview);
+
+				function set_error(msg) {
+					errorEl.textContent = msg || "";
+					errorEl.style.display = msg ? "block" : "none";
+				}
+
+				function call_api(method, args) {
+					return fetch("/api/method/tnl_theme.bid_management.signing." + method, {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify(args),
+					}).then(function (res) {
+						if (!res.ok) {
+							return res
+								.json()
+								.then(function (data) {
+									var msg = (data._server_messages && JSON.parse(data._server_messages)[0]) || null;
+									throw msg ? JSON.parse(msg).message : "{{ _('Request failed — please try again.') }}";
+								})
+								.catch(function (e) {
+									throw typeof e === "string" ? e : "{{ _('Request failed — please try again.') }}";
+								});
+						}
+						return res.json();
+					});
+				}
+
+				if (signBtn) {
+					signBtn.addEventListener("click", function () {
+						var name = (nameInput.value || "").trim();
+						var email = (emailInput.value || "").trim();
+						if (!name) return set_error("{{ _('Please enter your name.') }}");
+						if (!email) return set_error("{{ _('Please enter your email.') }}");
+						if ($pad && !hasDrawn) return set_error("{{ _('Please draw your signature.') }}");
+
+						set_error("");
+						signBtn.disabled = true;
+						signBtn.textContent = "{{ _('Submitting…') }}";
+
+						call_api("submit_signature", {
+							proposal: PROPOSAL_NAME,
+							key: SIGNING_KEY,
+							signer_name: name,
+							signer_email: email,
+							signature_data: $pad ? $pad.jSignature("getData") : "",
+						})
+							.then(function () {
+								window.location.reload();
+							})
+							.catch(function (err) {
+								signBtn.disabled = false;
+								signBtn.textContent = "{{ _('Sign') }}";
+								set_error(err);
+							});
+					});
+				}
+
+				if (declineBtn) {
+					declineBtn.addEventListener("click", function () {
+						var name = (nameInput.value || "").trim();
+						if (!name) return set_error("{{ _('Please enter your name before declining.') }}");
+						var reason = window.prompt("{{ _('Optional: let us know why (or leave blank)') }}") || "";
+
+						call_api("decline_signature", {
+							proposal: PROPOSAL_NAME,
+							key: SIGNING_KEY,
+							signer_name: name,
+							reason: reason,
+						})
+							.then(function () {
+								window.location.reload();
+							})
+							.catch(function (err) {
+								set_error(err);
+							});
+					});
+				}
+			});
+		})();
+	</script>
+	{% endif %}
+</body>
+</html>

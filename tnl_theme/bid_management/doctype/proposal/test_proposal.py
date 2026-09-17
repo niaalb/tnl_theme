@@ -166,3 +166,45 @@ class TestProposal(IntegrationTestCase):
 
 		# The already-built Proposal must not have silently changed.
 		self.assertEqual(frappe.get_cached_doc("Proposal", proposal.name).technical_approach, "Version 1")
+
+	def test_additional_sections_persist_independently_of_pull(self):
+		bid = self.make_bid(bid_manager="bidmgr@bidtest.com")
+		proposal = self.make_proposal(bid.name)
+		self.make_output(bid.name, "Technical", content="Technical write-up", ready_for_proposal=1)
+
+		frappe.set_user("bidmgr@bidtest.com")
+		d = frappe.get_doc("Proposal", proposal.name)
+		d.append("additional_sections", {"section_label": "Assumptions", "content": "Some assumptions."})
+		d.append("additional_sections", {"section_label": "Out of Scope", "content": "Not included."})
+		d.save()
+
+		saved = frappe.get_cached_doc("Proposal", proposal.name)
+		self.assertEqual(len(saved.additional_sections), 2)
+		self.assertEqual(saved.additional_sections[0].section_label, "Assumptions")
+		self.assertEqual(saved.additional_sections[1].section_label, "Out of Scope")
+
+		# Pulling workstream outputs must neither touch nor be blocked by
+		# the additional sections — they're a completely separate list.
+		result = saved.pull_workstream_outputs()
+		self.assertEqual(result["pulled"], ["Technical"])
+
+		reloaded = frappe.get_cached_doc("Proposal", proposal.name)
+		self.assertEqual(len(reloaded.additional_sections), 2)
+		self.assertEqual(reloaded.technical_approach, "Technical write-up")
+
+	def test_title_defaults_when_left_blank(self):
+		bid = self.make_bid(client_account="Blank Title Test Co.")
+		proposal = self.make_proposal(bid.name)
+
+		self.assertTrue(proposal.title)
+		self.assertIn("Blank Title Test Co.", proposal.title)
+
+	def test_additional_section_requires_label(self):
+		bid = self.make_bid(bid_manager="bidmgr@bidtest.com")
+		proposal = self.make_proposal(bid.name)
+
+		frappe.set_user("bidmgr@bidtest.com")
+		d = frappe.get_doc("Proposal", proposal.name)
+		d.append("additional_sections", {"content": "Missing a label"})
+		with self.assertRaises(frappe.MandatoryError):
+			d.save()

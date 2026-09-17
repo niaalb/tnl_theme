@@ -9,6 +9,8 @@
  "field_order": [
   "tab_overview",
   "client_account",
+  "client_contact_name",
+  "client_contact_email",
   "customer",
   "crm_deal",
   "crm_lead",
@@ -80,6 +82,20 @@
    "label": "Client / Account",
    "permlevel": 4,
    "reqd": 1
+  },
+  {
+   "description": "The client-side signer for this Bid's Proposals — used when sending a Proposal for e-signature.",
+   "fieldname": "client_contact_name",
+   "fieldtype": "Data",
+   "label": "Client Contact Name",
+   "permlevel": 4
+  },
+  {
+   "fieldname": "client_contact_email",
+   "fieldtype": "Data",
+   "label": "Client Contact Email",
+   "options": "Email",
+   "permlevel": 4
   },
   {
    "fieldname": "customer",

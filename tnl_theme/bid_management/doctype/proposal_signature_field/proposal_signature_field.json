@@ -1,0 +1,75 @@
+{
+ "actions": [],
+ "creation": "2026-09-14 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "field_type",
+  "page_number",
+  "x",
+  "y",
+  "width",
+  "height"
+ ],
+ "fields": [
+  {
+   "fieldname": "field_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Field Type",
+   "options": "Signature\nDate\nSigned By Name",
+   "reqd": 1
+  },
+  {
+   "description": "1-based page, within this Proposal's own rendered document, this box sits on.",
+   "fieldname": "page_number",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Page",
+   "reqd": 1
+  },
+  {
+   "description": "PDF points, measured from the top-left of the page named above.",
+   "fieldname": "x",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "X",
+   "reqd": 1
+  },
+  {
+   "description": "PDF points, measured from the top-left of the page named above.",
+   "fieldname": "y",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Y",
+   "reqd": 1
+  },
+  {
+   "fieldname": "width",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Width",
+   "reqd": 1
+  },
+  {
+   "fieldname": "height",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Height",
+   "reqd": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-09-14 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Bid Management",
+ "name": "Proposal Signature Field",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "creation",
+ "sort_order": "ASC",
+ "states": []
+}

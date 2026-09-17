@@ -20,9 +20,21 @@
   "technical_approach",
   "commercial_terms",
   "compliance_statement",
+  "section_break_additional_sections",
+  "additional_sections",
   "tab_meta",
   "prepared_by",
-  "reviewed_by"
+  "reviewed_by",
+  "section_break_signature",
+  "signature_layout",
+  "signature_status",
+  "signed_by_name",
+  "signed_by_email",
+  "column_break_signature",
+  "signed_on",
+  "client_signature",
+  "signed_document",
+  "signing_log"
  ],
  "fields": [
   {
@@ -60,6 +72,7 @@
   },
   {
    "default": "Draft",
+   "description": "Sent is a manual self-report — this system doesn't email the proposal out, so nothing else can detect when it was actually sent.",
    "fieldname": "status",
    "fieldtype": "Select",
    "in_list_view": 1,
@@ -69,9 +82,10 @@
    "reqd": 1
   },
   {
-   "description": "Sent is a manual self-report — this system doesn't email the proposal out, so nothing else can detect when it was actually sent.",
+   "description": "Defaults to the client account and version if left blank.",
    "fieldname": "title",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Title"
   },
   {
@@ -107,6 +121,19 @@
    "label": "Compliance Statement"
   },
   {
+   "description": "Click a row to open it and write its content — drag to reorder, or use the row menu to delete.",
+   "fieldname": "section_break_additional_sections",
+   "fieldtype": "Section Break",
+   "label": "Additional Sections"
+  },
+  {
+   "description": "Any other sections this proposal needs beyond the four above — Assumptions, Out of Scope, Project Team, or anything else a given deal calls for. Shown in print in the order listed here, numbered after the sections above.",
+   "fieldname": "additional_sections",
+   "fieldtype": "Table",
+   "label": "Additional Sections",
+   "options": "Proposal Additional Section"
+  },
+  {
    "fieldname": "tab_meta",
    "fieldtype": "Tab Break",
    "label": "Meta"
@@ -124,6 +151,72 @@
    "fieldtype": "Link",
    "label": "Reviewed By",
    "options": "User"
+  },
+  {
+   "fieldname": "section_break_signature",
+   "fieldtype": "Section Break",
+   "label": "E-Signature"
+  },
+  {
+   "description": "Configured via \"Place Signature\" on this Proposal — not meant to be hand-edited.",
+   "fieldname": "signature_layout",
+   "fieldtype": "Table",
+   "label": "Signature Layout",
+   "options": "Proposal Signature Field",
+   "read_only": 1
+  },
+  {
+   "default": "Not Sent",
+   "description": "Not Sent → Sent → Signed/Declined. Driven by Send for Signature and the guest signing page — not meant to be hand-edited.",
+   "fieldname": "signature_status",
+   "fieldtype": "Select",
+   "label": "Signature Status",
+   "options": "Not Sent\nSent\nSigned\nDeclined",
+   "read_only": 1
+  },
+  {
+   "fieldname": "signed_by_name",
+   "fieldtype": "Data",
+   "label": "Signed By",
+   "read_only": 1
+  },
+  {
+   "fieldname": "signed_by_email",
+   "fieldtype": "Data",
+   "label": "Signed By Email",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_signature",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "signed_on",
+   "fieldtype": "Datetime",
+   "label": "Signed On",
+   "read_only": 1
+  },
+  {
+   "description": "Captured on the guest signing page — also rendered wherever the Signature box was placed in the Template's signature area.",
+   "fieldname": "client_signature",
+   "fieldtype": "Signature",
+   "label": "Client Signature",
+   "read_only": 1
+  },
+  {
+   "description": "The final PDF, generated the moment the client signs, with the signature embedded exactly where the Template's signature area places it.",
+   "fieldname": "signed_document",
+   "fieldtype": "Attach",
+   "label": "Signed Document",
+   "read_only": 1
+  },
+  {
+   "description": "One row per view/sign/decline event on the guest signing page — append-only.",
+   "fieldname": "signing_log",
+   "fieldtype": "Table",
+   "label": "Signing Log",
+   "options": "Proposal Signing Log",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,

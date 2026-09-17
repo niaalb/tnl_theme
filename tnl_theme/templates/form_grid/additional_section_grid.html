@@ -1,0 +1,21 @@
+{% if(!doc) { %}
+	<div class="row">
+		<div class="col-sm-12 text-muted small" style="padding: 4px 0;">{%= __("Additional Sections") %}</div>
+	</div>
+{% } else { %}
+	<div class="row" style="padding: 6px 2px;">
+		<div class="col-sm-12">
+			<div style="font-weight: 600; color: #241c22; border-left: 3px solid #724b68; padding-left: 8px;">
+				{%= doc.section_label || __("Untitled Section") %}
+			</div>
+			<div class="text-muted small" style="padding-left: 11px; margin-top: 2px;">
+				{% var preview = strip_html(doc.content || "").trim(); %}
+				{% if (preview) { %}
+					{%= preview.length > 140 ? preview.slice(0, 140) + "…" : preview %}
+				{% } else { %}
+					{%= __("No content yet — click to write it.") %}
+				{% } %}
+			</div>
+		</div>
+	</div>
+{% } %}
