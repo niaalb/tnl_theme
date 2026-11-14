@@ -97,6 +97,23 @@ jobs:
           docker compose -p frappe_docker -f compose.custom.yaml pull
           docker compose -p frappe_docker -f compose.custom.yaml up -d
 
+      - name: Wait for the migrator container to finish
+        # `up -d` returns as soon as the migrator *starts*, and its
+        # `bench --site all migrate` holds the bench_migrate file lock for
+        # several minutes. The fixed 15s retries below were far shorter
+        # than that, so every attempt hit "Failed to aquire lock:
+        # bench_migrate" and the step still went green. Blocking on the
+        # container's exit first means the steps below run against a
+        # site that's no longer mid-migration.
+        run: |
+          cd /opt/frappe/frappe_docker
+          migrator=$(docker compose -p frappe_docker -f compose.custom.yaml ps -aq migrator)
+          if [ -n "$migrator" ]; then
+            code=$(timeout 1800 docker wait "$migrator")
+            echo "migrator exited with code $code"
+            docker logs --tail 40 "$migrator"
+          fi
+
       - name: Install any newly-added apps on the site
         # bench install-app is idempotent — an app already installed is
         # skipped with a warning, not an error — so this is safe to run
@@ -135,11 +152,28 @@ jobs:
           for attempt in 1 2 3; do
             if docker compose -p frappe_docker -f compose.custom.yaml exec -T backend \
               bench --site operiqsa.com migrate; then
-              break
+              exit 0
             fi
             echo "migrate failed (attempt $attempt/3), retrying in 15s..."
             sleep 15
           done
+          # Fail the deploy loudly instead of reporting success when the
+          # after_migrate fixups never actually ran.
+          exit 1
+
+      - name: Clear cache and report CRM tile state
+        # Runs even if migrate failed, so the log always shows where the
+        # home-screen "CRM" tile actually points — the server itself isn't
+        # otherwise reachable for checking this by hand.
+        if: always()
+        run: |
+          cd /opt/frappe/frappe_docker
+          B="docker compose -p frappe_docker -f compose.custom.yaml exec -T backend bench --site operiqsa.com"
+          $B clear-cache || true
+          echo "--- Desktop Icon rows matching CRM ---"
+          $B execute frappe.db.sql --args '["select name, label, icon_type, link_type, link, link_to, hidden, parent_icon, owner from `tabDesktop Icon` where label like \"%CRM%\""]' || true
+          echo "--- Desktop Layouts mentioning CRM (fixed = already points at /crm) ---"
+          $B execute frappe.db.sql --args '["select name, layout like \"%/crm%\" as fixed from `tabDesktop Layout` where layout like \"%CRM%\""]' || true
 
       - name: Clean up old images
         # Every deploy pulls a fresh multi-hundred-MB image; without this the
