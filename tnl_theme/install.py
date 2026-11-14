@@ -20,6 +20,7 @@ def after_install():
 	hide_frappe_help_links()
 	retire_legacy_crm_workspace()
 	retire_legacy_crm_home_card()
+	repoint_crm_desktop_layouts()
 
 
 def hide_frappe_help_links():
@@ -171,6 +172,55 @@ def retire_legacy_crm_home_card():
 
 	home.save(ignore_permissions=True)
 	frappe.cache.delete_key("bootinfo")
+
+
+def repoint_crm_desktop_layouts():
+	"""Point the "CRM" tile in every user's saved Desktop Layout at
+	Frappe CRM (/crm) instead of ERPNext's old CRM sidebar.
+
+	A Desktop Layout is a per-user, frozen JSON snapshot of every icon
+	(label, link_type, link...) taken the first time that user edits or
+	rearranges their /desk home screen. Once one exists, desktop.js
+	renders straight from it (DesktopPage.sync_layout ->
+	frappe.desktop_icons = this.data) and never looks at the Desktop
+	Icon table again — so deleting the "CRM" Desktop Icon in
+	retire_legacy_crm_workspace didn't reach these users at all. Their
+	snapshot still carries the old {"label": "CRM", "link_type":
+	"Workspace Sidebar"} entry, which get_route() resolves through
+	frappe.boot.workspace_sidebar_item["crm"] — ERPNext's CRM-module
+	fallback sidebar, which can never be removed (see
+	retire_legacy_crm_workspace) and whose first link is Campaign,
+	hence /desk/campaign.
+
+	Rewrites that entry into an External link to /crm rather than
+	dropping it, so users keep the tile where they placed it. Icons can
+	be nested under a folder's `child_icons`, so the walk is recursive.
+
+	Idempotent — External entries are skipped — and re-applied on every
+	migrate, since any user can still be holding an older snapshot."""
+	def repoint(icons):
+		changed = False
+		for icon in icons:
+			if not isinstance(icon, dict):
+				continue
+			if icon.get("label") == "CRM" and icon.get("link_type") != "External":
+				icon["link_type"] = "External"
+				icon["link"] = "/crm"
+				icon["link_to"] = None
+				changed = True
+			if repoint(icon.get("child_icons") or []):
+				changed = True
+		return changed
+
+	import json
+
+	for name, layout in frappe.get_all("Desktop Layout", fields=["name", "layout"], as_list=True):
+		try:
+			icons = json.loads(layout or "[]")
+		except ValueError:
+			continue
+		if isinstance(icons, list) and repoint(icons):
+			frappe.db.set_value("Desktop Layout", name, "layout", json.dumps(icons))
 
 
 def _rebuild_frappe_crm_sidebar():

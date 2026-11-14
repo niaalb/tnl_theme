@@ -102,6 +102,7 @@ after_migrate = [
 	"tnl_theme.install.hide_frappe_help_links",
 	"tnl_theme.install.retire_legacy_crm_workspace",
 	"tnl_theme.install.retire_legacy_crm_home_card",
+	"tnl_theme.install.repoint_crm_desktop_layouts",
 ]
 
 # Uninstallation
