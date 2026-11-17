@@ -247,8 +247,18 @@ def _rebuild_frappe_crm_sidebar():
 
 	Has to re-run every migrate, not just once: this doctype has no
 	on-disk fixture in any app, so migrate's orphan-cleanup deletes
-	whatever's here on every single run regardless of what it's named."""
-	from frappe.desk.doctype.workspace_sidebar.workspace_sidebar import auto_generate_sidebar_from_module
+	whatever's here on every single run regardless of what it's named.
+
+	Newer Frappe v16 releases removed auto_generate_sidebar_from_module.
+	When it's gone this skips the rebuild rather than raising, because an
+	exception here aborts the whole `bench migrate` — including every
+	after_migrate hook queued after this one."""
+	try:
+		from frappe.desk.doctype.workspace_sidebar.workspace_sidebar import (
+			auto_generate_sidebar_from_module,
+		)
+	except ImportError:
+		return
 
 	for sidebar_name in ("CRM", "Frappe CRM"):
 		if frappe.db.exists("Workspace Sidebar", sidebar_name):
