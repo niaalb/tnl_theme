@@ -51,19 +51,17 @@ def hide_frappe_help_links():
 
 
 def retire_legacy_crm_workspace():
-	"""Delete ERPNext's built-in CRM workspace and its "CRM" Desktop Icon
-	(the classic module-grid tile on the plain /desk home page — a third,
-	separate navigation surface from the sidebar, with its own doctype
-	and its own stale link), so nothing CRM-like keeps pointing at
+	"""Delete ERPNext's built-in CRM workspace and repoint its "CRM"
+	Desktop Icon (the tile on the /desk home page — a third, separate
+	navigation surface from the sidebar, with its own doctype and its own
+	stale link) at Frappe CRM, so nothing CRM-like keeps pointing at
 	ERPNext's Lead/Opportunity/Customer system once Frappe CRM is
-	installed. This only removes dashboard/sidebar/tile pages — the
+	installed. This only changes dashboard/sidebar/tile pages — the
 	underlying doctypes and their data are untouched.
 
-	The Desktop Icon is deleted rather than hidden for the same reason
-	as the workspace below: its `hidden` flag was already set to 1 and
-	made no difference — Workspace Manager–level accounts bypass hidden
-	checks in more than one of these three separate systems, not just
-	the one this was first discovered in.
+	The Desktop Icon is repointed rather than deleted: deleting it left
+	the home screen with no CRM tile at all (see
+	_point_crm_desktop_icon_at_frappe_crm).
 
 	Frappe CRM's own workspace is left under its original name ("Frappe
 	CRM"), not renamed to plain "CRM". A plain rename was tried first,
@@ -95,11 +93,9 @@ def retire_legacy_crm_workspace():
 		else:
 			frappe.delete_doc("Workspace", "CRM", ignore_permissions=True, force=True)
 
-	if frappe.db.exists("Desktop Icon", "CRM"):
-		frappe.delete_doc("Desktop Icon", "CRM", ignore_permissions=True, force=True)
+	_point_crm_desktop_icon_at_frappe_crm()
 
-	# Deliberately outside the exists() check above, unlike the delete
-	# call itself: Desktop Icon.on_trash() only clears
+	# Deliberately unconditional: Desktop Icon.on_trash() only clears
 	# clear_desktop_icons_cache() for frappe.session.user — whoever's
 	# session is running the delete (Administrator, during migrate) —
 	# not for every user who already had their own icons cached, so each
@@ -172,6 +168,37 @@ def retire_legacy_crm_home_card():
 
 	home.save(ignore_permissions=True)
 	frappe.cache.delete_key("bootinfo")
+
+
+def _point_crm_desktop_icon_at_frappe_crm():
+	"""Make the "CRM" home-screen tile open Frappe CRM (/crm).
+
+	ERPNext ships a standard "CRM" Desktop Icon (erpnext/desktop_icon/
+	crm.json) linked to its CRM Workspace Sidebar, whose first link is
+	Campaign — that's what sent the tile to /desk/campaign. It used to be
+	deleted here instead, but that left no CRM tile at all: Frappe CRM's
+	own app icon isn't on the home screen. So the record is kept and
+	repointed in place as an External link to /crm, shown at the top
+	level instead of inside the ERPNext folder.
+
+	Created when missing, since ERPNext's sync only re-adds it on the
+	next migrate. Written with db.set_value so ERPNext's sync of
+	crm.json (which runs before after_migrate) is simply overridden again
+	on every migrate."""
+	values = {
+		"icon_type": "Link",
+		"link_type": "External",
+		"link": "/crm",
+		"link_to": None,
+		"hidden": 0,
+		"parent_icon": None,
+	}
+	if frappe.db.exists("Desktop Icon", "CRM"):
+		frappe.db.set_value("Desktop Icon", "CRM", values)
+	else:
+		frappe.get_doc(
+			{"doctype": "Desktop Icon", "label": "CRM", "icon": "handshake", "standard": 1, **values}
+		).insert(ignore_permissions=True)
 
 
 def repoint_crm_desktop_layouts():
