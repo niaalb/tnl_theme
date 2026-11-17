@@ -81,6 +81,17 @@ jobs:
           cd /opt/frappe/frappe_docker
           sed -i "s|^CUSTOM_IMAGE=.*|CUSTOM_IMAGE=${{ env.IMAGE }}|" custom.env
           sed -i "s/^CUSTOM_TAG=.*/CUSTOM_TAG=${{ github.sha }}/" custom.env
+          # Turn the migrator container's own `bench migrate` off: it ran
+          # in parallel with the explicit migrate step below, and with
+          # `restart: on-failure:5` a failing run kept restarting and
+          # re-taking the bench_migrate lock, so that step could never
+          # get it. Migrating only in that step keeps it single and its
+          # errors visible in this log.
+          if grep -q '^MIGRATE_SITES=' custom.env; then
+            sed -i 's/^MIGRATE_SITES=.*/MIGRATE_SITES=false/' custom.env
+          else
+            echo 'MIGRATE_SITES=false' >> custom.env
+          fi
           docker compose --env-file custom.env \
             -f compose.yaml \
             -f overrides/compose.mariadb.yaml \
